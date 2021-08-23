@@ -9,11 +9,39 @@ let g:plugin_base_path = $HOME.'/.vim/plugged'
 call plug#begin(g:plugin_base_path)
 
 " Icons (Used by cool-looking plugins)
+if has('nvim')
 Plug 'https://github.com/kyazdani42/nvim-web-devicons'
-" Buffer line
+endif
+
+" Buffer line & Status line
+if has('nvim')
 Plug 'https://github.com/akinsho/nvim-bufferline.lua'
-" Status line
 Plug 'https://github.com/hoob3rt/lualine.nvim'
+else
+Plug 'https://github.com/vim-airline/vim-airline'
+endif
+
+" Nvim language server config (nvim-lsp)
+if has('nvim')
+Plug 'https://github.com/neovim/nvim-lspconfig'
+Plug 'https://github.com/glepnir/lspsaga.nvim'
+Plug 'https://github.com/simrat39/symbols-outline.nvim'
+endif
+" TODO: Support vim?
+
+" Auto complete
+if has('nvim')
+Plug 'https://github.com/hrsh7th/nvim-compe'
+else
+Plug 'https://github.com/roxma/nvim-yarp'
+Plug 'https://github.com/roxma/vim-hug-neovim-rpc'
+Plug 'https://github.com/Shougo/deoplete.nvim'
+endif
+
+if has('nvim')
+" File viewer (better than netrw!)
+Plug 'https://github.com/kyazdani42/nvim-tree.lua'
+endif
 
 " Snippets (press tab to expand)
 Plug 'https://github.com/honza/vim-snippets'
@@ -21,39 +49,27 @@ Plug 'https://github.com/garbas/vim-snipmate'
 Plug 'https://github.com/marcweber/vim-addon-mw-utils'
 Plug 'https://github.com/tomtom/tlib_vim'
 
+" Indent guide
+if has('nvim')
+Plug 'https://github.com/lukas-reineke/indent-blankline.nvim'
+else
+Plug 'https://github.com/nathanaelkane/vim-indent-guides'
+endif
+
 " Working with deliminators
 Plug 'https://github.com/tpope/vim-surround'
 " Working with comments
 Plug 'https://github.com/scrooloose/nerdcommenter'
-
-" File viewer (better than netrw!)
-Plug 'https://github.com/kyazdani42/nvim-tree.lua'
-
-" Indent guide
-Plug 'https://github.com/nathanaelkane/vim-indent-guides'
 " Trailing whitespaces
 Plug 'https://github.com/ntpeters/vim-better-whitespace'
 
-" Nvim language server config (nvim-lsp)
-if has('nvim')
-Plug 'https://github.com/neovim/nvim-lspconfig'
-Plug 'https://github.com/Shougo/deoplete-lsp'
-Plug 'https://github.com/glepnir/lspsaga.nvim'
-endif
-" TODO: Support vim?
-
-" Deoplete
-if has('nvim')
-Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Git +/- signs
+if has('nvim') || has('patch-8.0.902')
+  Plug 'mhinz/vim-signify'
 else
-Plug 'https://github.com/roxma/nvim-yarp'
-Plug 'https://github.com/roxma/vim-hug-neovim-rpc'
-Plug 'https://github.com/Shougo/deoplete.nvim'
+  Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
 endif
-
-" git +/- signs
-Plug 'https://github.com/airblade/vim-gitgutter'
-" git operations
+" Git operations
 Plug 'https://github.com/tpope/vim-fugitive'
 
 " fzf
@@ -81,6 +97,14 @@ Plug 'https://github.com/rktjmp/lush.nvim'
 " My colorscheme
 if has('nvim')
 Plug 'https://github.com/chmnchiang/vim-color-scheme-meteor'
+endif
+
+" For OSC 52 yank
+Plug 'https://github.com/ojroques/vim-oscyank'
+
+" Sessions
+if has('nvim')
+Plug 'https://github.com/rmagatti/auto-session'
 endif
 
 call plug#end()
@@ -144,11 +168,10 @@ if has('nvim')
     \ |   exe "normal! g`\""
     \ | endif
 endif
-" TODO: rmagatti/auto-session?
 
 "}}}
 
-" Key Settings {{{
+" Key Mappings {{{
 
 " set mapleader to be <space>
 let mapleader=' '
@@ -167,10 +190,18 @@ noremap - <C-x>
 " ^A is used by tmux, change to ^B
 inoremap <C-b> <C-a>
 " buffer
-" TODO: work with nvim-buffer
+
+if has("nvim")
+nnoremap <leader>l :BufferLineCycleNext<CR>
+nnoremap <leader>h :BufferLineCyclePrev<CR>
+nnoremap <leader><M-l> :BufferLineMoveNext<CR>
+nnoremap <leader><M-h> :BufferLineMovePrev<CR>
+else
 nnoremap <leader>l :bn<CR>
 nnoremap <leader>h :bp<CR>
+endif
 nnoremap <leader>q :bd<CR>
+
 " Terminal
 if has("nvim")
   " tie usual escape to vim
@@ -181,7 +212,7 @@ endif
 
 "}}}
 
-"{{{ Language client settings
+"{{{ Language Client Settings
 
 if has('nvim')
 
@@ -273,6 +304,7 @@ nnoremap <silent><leader>;r :Lspsaga rename<CR>
 nnoremap <silent><leader>e :Lspsaga show_line_diagnostics<CR>
 nnoremap <silent>[g :Lspsaga diagnostic_jump_next<CR>
 nnoremap <silent>]g :Lspsaga diagnostic_jump_prev<CR>
+nnoremap <silent><leader>o :SymbolsOutline<CR>
 
 sign define LspDiagnosticsSignError         text=  texthl=LspDiagnosticsSignError        numhl=LspNumError
 sign define LspDiagnosticsSignWarning       text=  texthl=LspDiagnosticsSignWarning      numhl=LspNumWarning
@@ -283,52 +315,7 @@ endif
 
 "}}}
 
-" Other Plugin Settings {{{
-
-" Fuzzy finder
-if has('nvim')
-nnoremap <leader>b <cmd>Telescope buffers<CR>
-nnoremap <leader>g <cmd>Telescope live_grep<CR>
-nnoremap <leader>f <cmd>Telescope find_files<CR>
-else
-nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>g :Rg<CR>
-nnoremap <leader>f :Files<CR>
-endif
-
-" File tree viewer
-if has('nvim')
-nnoremap <leader>t <cmd>:NvimTreeToggle <CR>
-else
-nnoremap <leader>n :Explore <CR>
-endif
-
-" vim-airline
-if !has('nvim')
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-endif
-
-" vim-indent-guide
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_auto_colors = 0
-let g:indent_guides_guide_size = 1
-let g:indent_guides_start_level = 2
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  guibg=#242424 ctermbg=233
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd   guibg=#2c2c2c ctermbg=234
-
-" deoplete.nvim
-let g:deoplete#enable_at_startup = 1
-
-" vim-gitgutter
-let g:gitgutter_set_sign_backgrounds = 1
-let g:gitgutter_map_keys = 0
-
-" python-syntax
-let g:python_highlight_all = 1
-
-" snipMate
-let g:snipMate = { 'snippet_version' : 1 }
+"{{{ Buffer Line & Status Line
 
 if has('nvim')
 
@@ -410,9 +397,9 @@ require('lualine').setup {
       },
       {
         'diff',
-        color_added = get_highlight_fg('GitGutterAdd'),
-        color_modified = get_highlight_fg('GitGutterChange'),
-        color_removed = get_highlight_fg('GitGutterDelete'),
+        color_added = get_highlight_fg('DiffSignAdd'),
+        color_modified = get_highlight_fg('DiffSignChange'),
+        color_removed = get_highlight_fg('DiffSignDelete'),
       },
     },
     lualine_x = {'encoding', 'fileformat', 'filetype'},
@@ -432,7 +419,93 @@ require('telescope').setup {
   }
 }
 EOF
+
+else
+
+" vim-airline
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+
 endif
 
+"}}}
+
+" Other Plugin Settings {{{
+
+" Auto complete
+if has('nvim')
+" nvim-compe
+lua << EOF
+vim.o.completeopt = "menuone,noselect"
+
+require'compe'.setup({
+  enabled = true,
+  autocomplete = true,
+  min_length = 1,
+  preselect = 'enable',
+  source = {
+    path = true,
+    buffer = true,
+    calc = true,
+    nvim_lsp = true,
+    ultisnips = true,
+  },
+})
+
+EOF
+
+else
+" deoplete
+let g:deoplete#enable_at_startup = 1
+endif
+
+" Fuzzy finder
+if has('nvim')
+nnoremap <leader>b <cmd>Telescope buffers<CR>
+nnoremap <leader>g <cmd>Telescope live_grep<CR>
+nnoremap <leader>f <cmd>Telescope find_files<CR>
+else
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>g :Rg<CR>
+nnoremap <leader>f :Files<CR>
+endif
+
+" File tree viewer
+if has('nvim')
+nnoremap <leader>t <cmd>:NvimTreeToggle <CR>
+else
+nnoremap <leader>n :Explore <CR>
+endif
+
+" Indent Guide
+if has('nvim')
+
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  guifg=#282828
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd   guifg=#383838
+let g:indent_blankline_buftype_exclude = ['terminal']
+let g:indent_blankline_char_highlight_list = ['IndentGuidesOdd', 'IndentGuidesEven']
+
+else
+
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors = 0
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  guibg=#242424 ctermbg=233
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd   guibg=#2c2c2c ctermbg=234
+
+endif
+
+" python-syntax
+let g:python_highlight_all = 1
+
+" Signify
+let g:signify_sign_change = '~'
+
+" snipMate
+let g:snipMate = { 'snippet_version' : 1 }
+
+" OSC yank
+autocmd TextYankPost * if v:event.operator is 'y' && v:event.regname is '+' | OSCYankReg + | endif
 
 "}}}
