@@ -44,11 +44,21 @@ return function()
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
       virtual_text = false,
-      signs = true,
+      signs = {
+        priority = 20,
+      },
       underline = false,
       severity_sort = true,
     }
   )
+
+  vim.lsp.handlers['textDocument/hover'] =
+    vim.lsp.with(
+      vim.lsp.handlers.hover,
+      {
+        border = 'single'
+      }
+    )
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
   local servers = {

@@ -24,7 +24,9 @@ opt.conceallevel = 0
 
 opt.foldenable = true
 opt.foldmethod = 'marker'
+
 opt.completeopt:remove('preview')
+opt.pumheight = 15
 
 opt.signcolumn = 'yes'
 
