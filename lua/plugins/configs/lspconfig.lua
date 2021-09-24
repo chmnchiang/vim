@@ -1,29 +1,43 @@
+vim.g.floating_window_border = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
+
 return function()
   local nvim_lsp = require('lspconfig')
   local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
+    local has_telescope = pcall(require, 'telescope')
     local opts = { noremap = true, silent = true }
-    buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+
+    buf_set_keymap('n', '<Localleader>D', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', '<leader>;i', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    buf_set_keymap('n', '<leader>;t', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', '<leader>;r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<leader>;a', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    buf_set_keymap('n', '<leader>gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-    buf_set_keymap('n', '[g', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-    buf_set_keymap('n', ']g', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-    buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+    buf_set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    buf_set_keymap('n', '<Localleader>e', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = vim.g.floating_window_border })<CR>', opts)
+    buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    buf_set_keymap('n', '[g', '<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = vim.g.floating_window_border }})<CR>', opts)
+    buf_set_keymap('n', ']g', '<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = vim.g.floating_window_border }})<CR>', opts)
+
+    if not has_telescope then
+      buf_set_keymap('n', '<Localleader>d', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+      buf_set_keymap('n', '<Localleader>i', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+      buf_set_keymap('n', '<Localleader>t', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+      buf_set_keymap('n', '<Localleader>r', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
+      buf_set_keymap('n', '<Localleader>a', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    else
+      buf_set_keymap('n', '<Localleader>d', '<Cmd>Telescope lsp_definition<CR>', opts)
+      buf_set_keymap('n', '<Localleader>i', '<Cmd>Telescope lsp_implementations<CR>', opts)
+      buf_set_keymap('n', '<Localleader>t', '<Cmd>Telescope lsp_type_definitions<CR>', opts)
+      buf_set_keymap('n', '<Localleader>r', '<Cmd>Telescope lsp_references<CR>', opts)
+      buf_set_keymap('n', '<Localleader>a', '<Cmd>Telescope lsp_code_actions<CR>', opts)
+      buf_set_keymap('v', '<Localleader>a', [[<Cmd>'<,'>Telescope lsp_range_code_actions<CR>]], opts)
+      buf_set_keymap('n', '<Localleader>o', '<Cmd>Telescope lsp_document_symbols<Cr>', opts)
+    end
 
     -- Set some keybinds conditional on server capabilities
     if client.resolved_capabilities.document_formatting then
-      buf_set_keymap("n", "<leader>;f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+      buf_set_keymap('n', '<Localleader>f', '<Cmd>lua vim.lsp.buf.formatting()<CR>', opts)
     end
     if client.resolved_capabilities.document_range_formatting then
-      buf_set_keymap("v", "<leader>;f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+      buf_set_keymap('v', '<Localleader>f', '<Cmd>lua vim.lsp.buf.range_formatting()<CR>', opts)
     end
 
     -- Set autocommands conditional on server_capabilities
@@ -53,12 +67,9 @@ return function()
   )
 
   vim.lsp.handlers['textDocument/hover'] =
-    vim.lsp.with(
-      vim.lsp.handlers.hover,
-      {
-        border = 'single'
-      }
-    )
+    vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.floating_window_border })
+  vim.lsp.handlers['textDocument/signatureHelp'] =
+    vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.floating_window_border })
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
   local servers = {

@@ -35,7 +35,7 @@ opt.inccommand = 'nosplit'
 vim.cmd[[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
 
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = '\\'
 
 local noremap = require'utils'.noremap
 local noresimap = require'utils'.noresimap
@@ -46,6 +46,8 @@ noremap('n', '0', '^')
 noremap('n', '^', '0')
 noremap('n', ':', ',')
 noremap('n', ',', ':')
+noremap('v', ':', ',')
+noremap('v', ',', ':')
 noremap('n', '+', '<C-a>')
 noremap('n', '-', '<C-x>')
 noremap('i', '<C-b>', '<C-a>')

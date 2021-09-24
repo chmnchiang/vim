@@ -5,7 +5,7 @@ end
 return require'packer'.startup(function(use)
   use 'wbthomason/packer.nvim'
   use {
-	  'chmnchiang/vim-color-scheme-meteor',
+		'chmnchiang/vim-color-scheme-meteor',
     as = 'colorscheme',
 	  requires = 'rktjmp/lush.nvim',
 	  config = function()
