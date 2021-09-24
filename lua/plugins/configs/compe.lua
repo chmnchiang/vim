@@ -1,4 +1,6 @@
 return function()
+  local noresimap = require'utils'.noresimap
+
   vim.o.completeopt = "menuone,noselect"
   require'compe'.setup({
     enabled = true,
@@ -13,4 +15,8 @@ return function()
       ultisnips = true,
     },
   })
+
+  noresimap('i', '<C-Space>', [[compe#complete()]], { expr = true })
+  noresimap('i', '<C-e>', [[compe#close('<C-e>')]], { expr = true })
+  noresimap('i', '<CR>', [[compe#confirm('<CR>')]], { expr = true })
 end

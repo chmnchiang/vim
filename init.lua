@@ -32,6 +32,8 @@ opt.signcolumn = 'yes'
 
 opt.inccommand = 'nosplit'
 
+opt.splitright = true
+
 vim.cmd[[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
 
 vim.g.mapleader = ' '

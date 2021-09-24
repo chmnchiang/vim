@@ -32,7 +32,14 @@ return require'packer'.startup(function(use)
     config = require_config'nvim_tree',
   }
   use {
+    'ray-x/lsp_signature.nvim',
+    config = function()
+      require'lsp_signature'.setup { floating_window = false }
+    end
+  }
+  use {
     'neovim/nvim-lspconfig',
+    after = 'lsp_signature.nvim',
     config = require_config'lspconfig',
   }
   use {
