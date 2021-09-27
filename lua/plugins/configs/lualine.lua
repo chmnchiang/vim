@@ -2,7 +2,7 @@ return function()
   local get_highlight_color = require'utils'.get_highlight_color
 
   local function lsp_readiness()
-    if vim.lsp.buf_is_attached() then
+    if #vim.lsp.buf_get_clients(0) == 0 then
       return nil
     end
     local readiness = vim.lsp.buf.server_ready()

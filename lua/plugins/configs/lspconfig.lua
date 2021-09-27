@@ -31,7 +31,7 @@ local function config()
       buf_set_keymap('n', '<Localleader>r', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
       buf_set_keymap('n', '<Localleader>a', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     else
-      buf_set_keymap('n', '<Localleader>d', '<Cmd>Telescope lsp_definition<CR>', opts)
+      buf_set_keymap('n', '<Localleader>d', '<Cmd>Telescope lsp_definitions<CR>', opts)
       buf_set_keymap('n', '<Localleader>i', '<Cmd>Telescope lsp_implementations<CR>', opts)
       buf_set_keymap('n', '<Localleader>t', '<Cmd>Telescope lsp_type_definitions<CR>', opts)
       buf_set_keymap('n', '<Localleader>r', '<Cmd>Telescope lsp_references<CR>', opts)
