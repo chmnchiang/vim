@@ -1,15 +1,23 @@
 return function()
   local get_highlight_color = require'utils'.get_highlight_color
 
+  local function lsp_readiness()
+    if vim.lsp.buf_is_attached() then
+      return nil
+    end
+    local readiness = vim.lsp.buf.server_ready()
+    return readiness and ' ' or '痢'
+  end
+
   require('lualine').setup {
     options = {
       theme = 'onedark',
     },
     sections = {
-      lualine_a = {'mode'},
-      lualine_b = {'branch'},
+      lualine_a = {'mode', 'location'},
+      lualine_b = {'finename'},
       lualine_c = {
-        'filename',
+        lsp_readiness,
         {
           'diagnostics',
           sources = {'nvim_lsp'},
@@ -19,6 +27,8 @@ return function()
           color_hint = get_highlight_color('LspDiagnosticsSignHint', 'fg'),
           symbols = {error = ' ', warn = ' ', info = ' ', hint = ''}
         },
+      },
+      lualine_x = {
         {
           'signify_diff',
           color_added = get_highlight_color('DiffSignAdd', 'fg'),
@@ -26,10 +36,10 @@ return function()
           color_removed = get_highlight_color('DiffSignDelete', 'fg'),
           symbols = {added = '+', modified = '~', removed = '-'},
         },
+        'branch',
       },
-      -- lualine_x = { require'lsp-status'.status },
-      -- lualine_y = {'encoding', 'fileformat', 'filetype'},
-      -- lualine_z = {'progress', 'location'}
+      lualine_y = {'encoding', 'fileformat', 'filetype'},
+      lualine_z = {'progress'}
     },
   }
 end

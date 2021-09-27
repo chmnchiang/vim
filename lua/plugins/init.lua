@@ -1,5 +1,10 @@
 local function require_config(name)
-  return require('plugins.configs.' .. name)
+  local mod = require('plugins.configs.' .. name)
+  if (type(mod) == 'table') then
+    return mod.config
+  else
+    return mod
+  end
 end
 
 return require'packer'.startup(function(use)
@@ -10,7 +15,7 @@ return require'packer'.startup(function(use)
 	  requires = 'rktjmp/lush.nvim',
 	  config = function()
 		  vim.opt.termguicolors = true
-		  vim.cmd'colorscheme meteor-nvim'
+		  vim.cmd[[colorscheme meteor-nvim]]
     end,
   }
   use {

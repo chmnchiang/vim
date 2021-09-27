@@ -1,6 +1,8 @@
-vim.g.floating_window_border = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
+local M = {}
 
-return function()
+M.FLOATING_WINDOW_BORDER = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
+
+local function config()
   local nvim_lsp = require('lspconfig')
   local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -11,10 +13,16 @@ return function()
     buf_set_keymap('n', '<Localleader>D', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    buf_set_keymap('n', '<Localleader>e', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = vim.g.floating_window_border })<CR>', opts)
+    buf_set_keymap('n', '<Localleader>e',
+      [[<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })<CR>]],
+      opts)
     buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '[g', '<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = vim.g.floating_window_border }})<CR>', opts)
-    buf_set_keymap('n', ']g', '<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = vim.g.floating_window_border }})<CR>', opts)
+    buf_set_keymap('n', '[g',
+      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER }})<CR>]],
+      opts)
+    buf_set_keymap('n', ']g',
+      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER }})<CR>]],
+      opts)
 
     if not has_telescope then
       buf_set_keymap('n', '<Localleader>d', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
@@ -67,9 +75,11 @@ return function()
   )
 
   vim.lsp.handlers['textDocument/hover'] =
-    vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.floating_window_border })
+    vim.lsp.with(vim.lsp.handlers.hover,
+      { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })
   vim.lsp.handlers['textDocument/signatureHelp'] =
-    vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.floating_window_border })
+    vim.lsp.with(vim.lsp.handlers.signature_help,
+      { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
   local servers = {
@@ -116,3 +126,6 @@ return function()
     sign define LspDiagnosticsSignHint          text=  texthl=LspDiagnosticsSignHint         numhl=LspNumHint
   ]]
 end
+
+M.config = config
+return M
