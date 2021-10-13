@@ -2,7 +2,7 @@ local M = {}
 
 M.FLOATING_WINDOW_BORDER = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
 
-local function config()
+local function lsp_config()
   local nvim_lsp = require('lspconfig')
   local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -14,14 +14,14 @@ local function config()
     buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     buf_set_keymap('n', '<Localleader>e',
-      [[<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })<CR>]],
       opts)
     buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '[g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.configs'.FLOATING_WINDOW_BORDER }})<CR>]],
       opts)
     buf_set_keymap('n', ']g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.configs'.FLOATING_WINDOW_BORDER }})<CR>]],
       opts)
 
     if not has_telescope then
@@ -38,6 +38,9 @@ local function config()
       buf_set_keymap('n', '<Localleader>a', '<Cmd>Telescope lsp_code_actions<CR>', opts)
       buf_set_keymap('v', '<Localleader>a', [[<Cmd>'<,'>Telescope lsp_range_code_actions<CR>]], opts)
       buf_set_keymap('n', '<Localleader>o', '<Cmd>Telescope lsp_document_symbols<Cr>', opts)
+      buf_set_keymap('n', '<Leader>o', '<Cmd>Telescope lsp_workspace_symbols<Cr>', opts)
+      buf_set_keymap('n', '<Localleader>g', '<Cmd>Telescope lsp_document_diagnostics<Cr>', opts)
+      buf_set_keymap('n', '<Leader>g', '<Cmd>Telescope lsp_workspace_diagnostics<Cr>', opts)
     end
 
     -- Set some keybinds conditional on server capabilities
@@ -76,10 +79,10 @@ local function config()
 
   vim.lsp.handlers['textDocument/hover'] =
     vim.lsp.with(vim.lsp.handlers.hover,
-      { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })
+      { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })
   vim.lsp.handlers['textDocument/signatureHelp'] =
     vim.lsp.with(vim.lsp.handlers.signature_help,
-      { border = require'plugins.configs.lspconfig'.FLOATING_WINDOW_BORDER })
+      { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
   local servers = {
@@ -127,5 +130,25 @@ local function config()
   ]]
 end
 
-M.config = config
+function M.setup(use)
+  use {
+    'ray-x/lsp_signature.nvim',
+    config = function()
+      require'lsp_signature'.setup {
+        handler_opts = {
+          border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER
+        },
+      }
+    end
+  }
+  use {
+    'neovim/nvim-lspconfig',
+    after = 'lsp_signature.nvim',
+    config = lsp_config,
+  }
+  use {
+    'onsails/lspkind-nvim',
+  }
+end
+
 return M
