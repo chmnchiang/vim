@@ -13,6 +13,7 @@ local function nvim_cmp_setup()
         buffer = "[Buffer]",
         nvim_lsp = "[LSP]",
         path = "[Path]",
+        ultisnips = "[Snip]"
       },
     }
     vim.cmd[[highlight CmpItemAbbr guifg=#b0b0b0]]
@@ -28,6 +29,11 @@ local function nvim_cmp_setup()
   end
 
 	cmp.setup {
+    snippet = {
+      expand = function(args)
+        vim.fn["UltiSnips#Anon"](args.body)
+      end,
+    },
     mapping = {
       ['<C-d>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(-4),
@@ -39,6 +45,7 @@ local function nvim_cmp_setup()
       { name = 'nvim_lsp' },
       { name = 'buffer' },
       { name = 'path' },
+      { name = 'ultisnips' },
     },
     formatting = {
       format = format,
@@ -49,7 +56,7 @@ end
 function M.setup(use)
   use {
     'hrsh7th/nvim-cmp',
-    after = 'lspkind-nvim',
+    after = {'lspkind-nvim', 'ultisnips'},
     config = nvim_cmp_setup,
   }
   use {
@@ -63,6 +70,10 @@ function M.setup(use)
   use {
     'hrsh7th/cmp-path',
     after = 'nvim-cmp',
+  }
+  use {
+    'quangnguyen30192/cmp-nvim-ultisnips',
+    after = 'nvim-cmp'
   }
 end
 
