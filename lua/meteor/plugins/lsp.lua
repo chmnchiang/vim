@@ -18,10 +18,10 @@ local function lsp_config()
       opts)
     buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '[g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.configs'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER }})<CR>]],
       opts)
     buf_set_keymap('n', ']g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.configs'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER }})<CR>]],
       opts)
 
     if not has_telescope then
