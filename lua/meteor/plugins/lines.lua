@@ -93,9 +93,6 @@ local function lualine_config()
       lualine_x = {
         {
           'signify_diff',
-          color_added = get_highlight_color('DiffSignAdd', 'fg'),
-          color_modified = get_highlight_color('DiffSignChange', 'fg'),
-          color_removed = get_highlight_color('DiffSignDelete', 'fg'),
           symbols = {added = '+', modified = '~', removed = '-'},
         },
         'branch',

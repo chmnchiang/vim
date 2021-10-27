@@ -11,17 +11,24 @@ local function telescope_config()
           ["<C-k>"] = actions.move_selection_previous,
         }
       },
+      layout_strategy = 'vertical',
+      layout_config = {
+        vertical = { width = 0.8, height = { padding = 1 } }
+      },
+      path_display = {
+        truncate = 2,
+      }
     },
     pickers = {
       buffers = {
-        sort_lastused = true,
+        sort_mru = true,
       }
     }
   }
 
   local noresimap = require'meteor.utils'.noresimap
   noresimap('n', '<leader>b', '<cmd>Telescope buffers<CR>')
-  noresimap('n', '<leader>g', '<cmd>Telescope live_grep<CR>')
+  noresimap('n', '<leader>G', '<cmd>Telescope live_grep<CR>')
   noresimap('n', '<leader>f', '<cmd>Telescope find_files<CR>')
   noresimap('n', '<leader>r', '<cmd>Telescope resume<CR>')
 end

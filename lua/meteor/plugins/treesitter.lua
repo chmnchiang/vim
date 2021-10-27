@@ -12,9 +12,23 @@ function M.setup(use)
         },
         playground = {
           enable = true,
+        },
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["ip"] = "@parameter.inner",
+              ["ap"] = "@parameter.outer",
+            },
+          }
         }
       }
     end
+  }
+  use {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    requires = 'nvim-treesitter/nvim-treesitter',
   }
 end
 
