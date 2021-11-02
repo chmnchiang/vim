@@ -83,10 +83,12 @@ local function lualine_config()
         {
           'diagnostics',
           sources = {'nvim_lsp'},
-          color_error = get_highlight_color('LspDiagnosticsSignError', 'fg'),
-          color_warn = get_highlight_color('LspDiagnosticsSignWarning', 'fg'),
-          color_info = get_highlight_color('LspDiagnosticsSignInformation', 'fg'),
-          color_hint = get_highlight_color('LspDiagnosticsSignHint', 'fg'),
+          diagnostics_color = {
+            error = { fg = get_highlight_color('LspDiagnosticsSignError', 'fg') },
+            warn = { fg = get_highlight_color('LspDiagnosticsSignWarning', 'fg') },
+            info = { fg = get_highlight_color('LspDiagnosticsSignInformation', 'fg') },
+            hint = { fg = get_highlight_color('LspDiagnosticsSignHint', 'fg') },
+          },
           symbols = {error = ' ', warn = ' ', info = ' ', hint = ''}
         },
       },

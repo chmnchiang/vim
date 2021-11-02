@@ -1,6 +1,6 @@
 local M = {}
 
-M.FLOATING_WINDOW_BORDER = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
+M.floating_window_border = {"🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏"}
 
 local function lsp_config()
   local nvim_lsp = require('lspconfig')
@@ -14,14 +14,14 @@ local function lsp_config()
     buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     buf_set_keymap('n', '<Localleader>e',
-      [[<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({ border = require'meteor.plugins.lsp'.floating_window_border })<CR>]],
       opts)
     buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '[g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
       opts)
     buf_set_keymap('n', ']g',
-      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER }})<CR>]],
+      [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
       opts)
 
     if not has_telescope then
@@ -79,10 +79,10 @@ local function lsp_config()
 
   vim.lsp.handlers['textDocument/hover'] =
     vim.lsp.with(vim.lsp.handlers.hover,
-      { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })
+      { border = require'meteor.plugins.lsp'.floating_window_border })
   vim.lsp.handlers['textDocument/signatureHelp'] =
     vim.lsp.with(vim.lsp.handlers.signature_help,
-      { border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER })
+      { border = require'meteor.plugins.lsp'.floating_window_border })
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
   local servers = {
@@ -132,19 +132,19 @@ end
 
 function M.setup(use)
   use {
+    'neovim/nvim-lspconfig',
+    after = 'lsp_signature.nvim',
+    config = lsp_config,
+  }
+  use {
     'ray-x/lsp_signature.nvim',
     config = function()
       require'lsp_signature'.setup {
         handler_opts = {
-          border = require'meteor.plugins.lsp'.FLOATING_WINDOW_BORDER
+          border = require'meteor.plugins.lsp'.floating_window_border
         },
       }
     end
-  }
-  use {
-    'neovim/nvim-lspconfig',
-    after = 'lsp_signature.nvim',
-    config = lsp_config,
   }
   use {
     'onsails/lspkind-nvim',
