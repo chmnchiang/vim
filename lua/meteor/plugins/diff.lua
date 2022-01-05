@@ -7,7 +7,7 @@ function M.setup(use)
       vim.g.signify_sign_add = '│'
       vim.g.signify_sign_change = '│'
       vim.g.signify_priority = 5
-    end
+    end,
   }
 end
 

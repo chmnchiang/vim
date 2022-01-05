@@ -36,7 +36,15 @@ opt.inccommand = 'nosplit'
 -- Default to split to the right.
 opt.splitright = true
 -- Restore the cursor to the line when reopen a file.
-vim.cmd[[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
+vim.cmd [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
+-- Open help vertically
+vim.cmd [[
+augroup vimrc_help
+  autocmd!
+  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+augroup END
+]]
+
 -- Map leaders. `mapleader` is used for global commands (switching buffers,
 -- etc.), and `maplocalleader` is used for local commands (mainly for LSP
 -- commands).

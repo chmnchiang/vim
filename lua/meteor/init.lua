@@ -10,5 +10,7 @@ return require'packer'.startup(function(use)
   require('meteor.plugins.tree').setup(use)
   require('meteor.plugins.completion').setup(use)
   require('meteor.plugins.diff').setup(use)
+  require('meteor.plugins.dap').setup(use)
+  require('meteor.plugins.experiments').setup(use)
 end)
 

@@ -1,8 +1,8 @@
 local M = {}
 
 local function nvim_cmp_setup()
-  local cmp = require'cmp'
-  local utils = require'meteor.utils'
+  local cmp = require 'cmp'
+  local utils = require 'meteor.utils'
   local has_lspkind, lspkind = pcall(require, 'lspkind')
 
   local lspkind_format = nil
@@ -10,13 +10,13 @@ local function nvim_cmp_setup()
     lspkind_format = lspkind.cmp_format {
       with_text = true,
       menu = {
-        buffer = "[Buffer]",
-        nvim_lsp = "[LSP]",
-        path = "[Path]",
-        ultisnips = "[Snip]"
+        buffer = '[Buffer]',
+        nvim_lsp = '[LSP]',
+        path = '[Path]',
+        ultisnips = '[Snip]',
       },
     }
-    vim.cmd[[highlight CmpItemAbbr guifg=#b0b0b0]]
+    vim.cmd [[highlight CmpItemAbbr guifg=#b0b0b0]]
   end
 
   local format = function(entry, vim_item)
@@ -28,53 +28,38 @@ local function nvim_cmp_setup()
     end
   end
 
-	cmp.setup {
+  cmp.setup {
     snippet = {
       expand = function(args)
-        vim.fn["UltiSnips#Anon"](args.body)
+        vim.fn['UltiSnips#Anon'](args.body)
       end,
     },
     mapping = {
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-d>'] = cmp.mapping.scroll_docs(4),
       ['<C-f>'] = cmp.mapping.scroll_docs(-4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm { select = false },
+      ['<CR>'] = cmp.mapping.confirm {select = false},
     },
     sources = {
-      { name = 'nvim_lsp' },
-      { name = 'buffer' },
-      { name = 'path' },
-      { name = 'ultisnips' },
+      {name = 'nvim_lsp'}, {name = 'buffer'}, {name = 'path'},
+      {name = 'ultisnips'},
     },
-    formatting = {
-      format = format,
-    }
+    formatting = {format = format},
   }
 end
 
 function M.setup(use)
   use {
     'hrsh7th/nvim-cmp',
-    after = {'lspkind-nvim', 'ultisnips'},
+    require = {'onsails/lspkind-nvim'},
+    after = {'ultisnips'},
     config = nvim_cmp_setup,
   }
-  use {
-    'hrsh7th/cmp-nvim-lsp',
-    after = 'nvim-cmp',
-  }
-  use {
-    'hrsh7th/cmp-buffer',
-    after = 'nvim-cmp',
-  }
-  use {
-    'hrsh7th/cmp-path',
-    after = 'nvim-cmp',
-  }
-  use {
-    'quangnguyen30192/cmp-nvim-ultisnips',
-    after = 'nvim-cmp'
-  }
+  use {'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp'}
+  use {'hrsh7th/cmp-buffer', after = 'nvim-cmp'}
+  use {'hrsh7th/cmp-path', after = 'nvim-cmp'}
+  use {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'}
 end
 
 return M
