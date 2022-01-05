@@ -1,9 +1,11 @@
 local M = {}
 
+local use_local_repo = false
+
 function M.setup(use)
   use {
-    -- 'chmnchiang/vim-color-scheme-meteor',
-    '~/.config/nvim/my-plugin/vim-color-scheme-meteor',
+    use_local_repo and '~/.config/nvim/my-plugin/vim-color-scheme-meteor' or
+        'chmnchiang/vim-color-scheme-meteor',
     as = 'colorscheme',
     requires = 'rktjmp/lush.nvim',
     config = function()
