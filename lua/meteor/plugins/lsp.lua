@@ -201,7 +201,7 @@ end
 function M.setup(use)
   use {
     'neovim/nvim-lspconfig',
-    require = {'hrsh7th/cmp-nvim-lsp'},
+    requires = {'hrsh7th/cmp-nvim-lsp'},
     after = 'lsp_signature.nvim',
     config = lsp_config,
   }

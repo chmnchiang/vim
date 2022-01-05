@@ -52,7 +52,7 @@ end
 function M.setup(use)
   use {
     'hrsh7th/nvim-cmp',
-    require = {'onsails/lspkind-nvim'},
+    requires = {'onsails/lspkind-nvim'},
     after = {'ultisnips'},
     config = nvim_cmp_setup,
   }
