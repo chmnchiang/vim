@@ -124,13 +124,13 @@ end
 function M.setup(use)
   use {
     'akinsho/bufferline.nvim',
-    after = 'colorscheme',
+    -- after = 'colorscheme',
     requires = 'kyazdani42/nvim-web-devicons',
     config = bufferline_config,
   }
   use {
     'hoob3rt/lualine.nvim',
-    after = {'colorscheme', 'lualine-signify-diff'},
+    after = {'lualine-signify-diff'},
     config = lualine_config,
   }
   use {'chmnchiang/lualine-signify-diff', requires = 'mhinz/vim-signify'}

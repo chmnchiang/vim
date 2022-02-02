@@ -31,6 +31,7 @@ local function nvim_cmp_setup()
   cmp.setup {
     snippet = {
       expand = function(args)
+        print('expand')
         vim.fn['UltiSnips#Anon'](args.body)
       end,
     },
@@ -53,10 +54,10 @@ function M.setup(use)
   use {
     'hrsh7th/nvim-cmp',
     requires = {'onsails/lspkind-nvim'},
-    after = {'ultisnips'},
     config = nvim_cmp_setup,
+    event = 'InsertEnter',
   }
-  use {'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp'}
+  use {'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp'}
   use {'hrsh7th/cmp-buffer', after = 'nvim-cmp'}
   use {'hrsh7th/cmp-path', after = 'nvim-cmp'}
   use {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'}

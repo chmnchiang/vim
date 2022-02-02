@@ -45,10 +45,12 @@ function M.setup(use)
         },
       }
     end,
+    event = 'BufRead',
   }
   use {
     'nvim-treesitter/nvim-treesitter-textobjects',
     requires = 'nvim-treesitter/nvim-treesitter',
+    after = 'nvim-treesitter',
   }
 end
 

@@ -2,10 +2,10 @@ local M = {}
 
 local function nvim_tree_config()
   local icons = require('meteor.icons')
-  require('meteor.utils').noresimap('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
   vim.g.nvim_tree_respect_buf_cwd = 0
 
   require('nvim-tree').setup {
+    auto_close = true,
     diagnostics = {
       enable = true,
       icons = {
@@ -20,7 +20,11 @@ end
 
 function M.setup(use)
   -- Temporary disable nvim-tree due to performance issues.
-  -- use {'kyazdani42/nvim-tree.lua', config = nvim_tree_config}
+  use {
+    'kyazdani42/nvim-tree.lua',
+    config = nvim_tree_config,
+    cmd = {'NvimTreeOpen', 'NvimTreeToggle'},
+  }
 end
 
 return M

@@ -1,0 +1,6 @@
+[submodule "custom-plugins/vim-color-scheme-meteor"]
+	path = custom-plugins/vim-color-scheme-meteor
+	url = https://github.com/chmnchiang/vim-color-scheme-meteor
+[submodule "custom-plugins/lualine-signify-diff"]
+	path = custom-plugins/lualine-signify-diff
+	url = https://github.com/chmnchiang/lualine-signify-diff

@@ -59,14 +59,20 @@ local function dap_python_config()
 end
 
 function M.setup(use)
-  use {'mfussenegger/nvim-dap', config = dap_config}
+  use {'mfussenegger/nvim-dap', config = dap_config, module = 'dap'}
   use {
     'rcarriga/nvim-dap-ui',
     requires = {'mfussenegger/nvim-dap'},
     config = dap_ui_config,
+    module = 'dapui',
+    after = 'nvim-dap',
   }
-  use {'mfussenegger/nvim-dap-python', config = dap_python_config}
-  use {'jbyuki/one-small-step-for-vimkind'}
+  use {
+    'mfussenegger/nvim-dap-python',
+    after = 'nvim-dap',
+    config = dap_python_config,
+  }
+  use {'jbyuki/one-small-step-for-vimkind', after = 'nvim-dap'}
 end
 
 return M

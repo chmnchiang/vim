@@ -1,11 +1,11 @@
 local M = {}
 
 function M.setup(use)
-  use {'tpope/vim-surround'}
-  use {'scrooloose/nerdcommenter'}
-  use {'ntpeters/vim-better-whitespace'}
-  use {'wellle/targets.vim'}
-  use {'sheerun/vim-polyglot'}
+  use {'tpope/vim-surround', event = 'BufRead'}
+  use {'scrooloose/nerdcommenter', event = 'BufRead'}
+  use {'ntpeters/vim-better-whitespace', event = 'BufRead'}
+  use {'wellle/targets.vim', event = 'BufRead'}
+  use {'sheerun/vim-polyglot', event = 'BufRead'}
   use {
     'lukas-reineke/indent-blankline.nvim',
     config = function()
@@ -16,6 +16,7 @@ function M.setup(use)
         'IndentGuidesOdd', 'IndentGuidesEven',
       }
     end,
+    event = 'BufRead',
   }
   use {
     'ojroques/vim-oscyank',
@@ -23,6 +24,7 @@ function M.setup(use)
       -- Use OSC52 when + register is used
       vim.cmd [[autocmd TextYankPost * if v:event.operator is 'y' && v:event.regname is '+' | OSCYankReg + | endif]]
     end,
+    event = 'BufRead',
   }
 end
 

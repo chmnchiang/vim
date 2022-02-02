@@ -20,12 +20,6 @@ local function telescope_config()
   }
   -- TODO: Integrate with Trouble.
   telescope.setup(options)
-
-  local noresimap = require'meteor.utils'.noresimap
-  noresimap('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
-  noresimap('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
-  noresimap('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
-  noresimap('n', '<leader>r', '<Cmd>Telescope resume<CR>')
 end
 
 local function trouble_config()
@@ -48,8 +42,14 @@ function M.setup(use)
     'nvim-telescope/telescope.nvim',
     requires = {'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons'},
     config = telescope_config,
+    module = 'telescope',
+    cmd = {'Telescope'},
   }
-  use {'folke/trouble.nvim', config = trouble_config}
+  use {
+    'folke/trouble.nvim',
+    config = trouble_config,
+    cmd = {'Trouble', 'TroubleToggle'},
+  }
 end
 
 return M

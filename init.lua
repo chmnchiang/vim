@@ -1,3 +1,6 @@
+vim.opt.termguicolors = true
+vim.cmd [[colorscheme meteor-nvim]]
+
 require 'meteor'
 
 local opt = vim.opt
@@ -69,3 +72,11 @@ noremap('i', '<C-b>', '<C-a>')
 noresimap('n', '<leader>l', ':bnext<CR>')
 noresimap('n', '<leader>h', ':bprev<CR>')
 noresimap('n', '<leader>q', ':bdelete<CR>')
+
+noresimap('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
+noresimap('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
+noresimap('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
+noresimap('n', '<leader>r', '<Cmd>Telescope resume<CR>')
+noresimap('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
+
+noresimap('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')

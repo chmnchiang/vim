@@ -4,6 +4,12 @@ M.floating_window_border = {
   '🭽', '▔', '🭾', '▕', '🭿', '▁', '🭼', '▏',
 }
 
+M.lsp_enabled_filetypes = {
+  'c', 'cpp', 'objc', 'objcpp', 'javascript', 'javascriptreact',
+  'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'python',
+  'tex', 'bib', 'rust', 'lua',
+}
+
 local function lsp_config()
   local nvim_lsp = require('lspconfig')
   local icons = require('meteor.icons')
@@ -27,10 +33,10 @@ local function lsp_config()
     buf_set_keymap('n', '<Localleader>R', '<Cmd>lua vim.lsp.buf.rename()<CR>',
         opts)
     buf_set_keymap('n', '[g',
-        [[<Cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
+        [[<Cmd>lua vim.diagnostic.goto_prev({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
         opts)
     buf_set_keymap('n', ']g',
-        [[<Cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
+        [[<Cmd>lua vim.diagnostic.goto_next({ popup_opts = { border = require'meteor.plugins.lsp'.floating_window_border }})<CR>]],
         opts)
 
     if not has_telescope then
@@ -202,8 +208,9 @@ function M.setup(use)
   use {
     'neovim/nvim-lspconfig',
     requires = {'hrsh7th/cmp-nvim-lsp'},
-    after = 'lsp_signature.nvim',
+    after = 'cmp-nvim-lsp',
     config = lsp_config,
+    ft = M.lsp_enabled_filetypes,
   }
   use {
     'ray-x/lsp_signature.nvim',
@@ -214,6 +221,7 @@ function M.setup(use)
         },
       }
     end,
+    after = 'nvim-lspconfig',
   }
 end
 
