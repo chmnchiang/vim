@@ -76,12 +76,6 @@ local function bufferline_config()
     },
     highlights = bufferline_highlights,
   }
-
-  local noresimap = require'meteor.utils'.noresimap
-  noresimap('n', '<leader>l', '<Cmd>BufferLineCycleNext<CR>')
-  noresimap('n', '<leader>h', '<Cmd>BufferLineCyclePrev<CR>')
-  noresimap('n', '<leader><M-l>', '<Cmd>BufferLineMoveNext<CR>')
-  noresimap('n', '<leader><M-h>', '<Cmd>BufferLineMovePrev<CR>')
 end
 
 local function lualine_config()
@@ -89,7 +83,7 @@ local function lualine_config()
   local get_highlight_color = require'meteor.utils'.get_highlight_color
 
   require('lualine').setup {
-    options = {theme = 'onedark'},
+    options = {theme = 'onedark', disabled_filetypes = {'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes'}},
     sections = {
       lualine_a = {'mode', 'location'},
       lualine_b = {'finename'},

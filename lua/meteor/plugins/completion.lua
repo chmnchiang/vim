@@ -48,6 +48,10 @@ local function nvim_cmp_setup()
     },
     formatting = {format = format},
   }
+  cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}})
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
+  })
 end
 
 function M.setup(use)
@@ -55,12 +59,13 @@ function M.setup(use)
     'hrsh7th/nvim-cmp',
     requires = {'onsails/lspkind-nvim'},
     config = nvim_cmp_setup,
-    event = 'InsertEnter',
+    event = {'InsertEnter', 'CmdlineEnter'},
   }
   use {'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp'}
   use {'hrsh7th/cmp-buffer', after = 'nvim-cmp'}
   use {'hrsh7th/cmp-path', after = 'nvim-cmp'}
-  use {'quangnguyen30192/cmp-nvim-ultisnips', after = 'nvim-cmp'}
+  use {'hrsh7th/cmp-cmdline', after = 'nvim-cmp'}
+  use {'quangnguyen30192/cmp-nvim-ultisnips', event = 'InsertEnter'}
 end
 
 return M

@@ -1,5 +1,16 @@
 local M = {}
 
+local function rust_tools_config()
+  require('rust-tools').setup {
+    tools = {
+      hover_actions = {
+        border = require('meteor.plugins.lsp').floating_window_border,
+      },
+    },
+    server = {on_attach = require('meteor.plugins.lsp').lsp_on_attach},
+  }
+end
+
 function M.setup(use)
   use {
     '~/Documents/Project/google-comments',
@@ -30,6 +41,7 @@ function M.setup(use)
           [[<Cmd>lua require('google.comments').goto_prev_comment()<CR>]])
     end,
   }
+  use {'simrat39/rust-tools.nvim', config = rust_tools_config, ft = {'rust'}}
 end
 
 return M

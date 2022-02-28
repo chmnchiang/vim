@@ -17,9 +17,15 @@ local function telescope_config()
       path_display = {'truncate'},
     },
     pickers = {buffers = {sort_mru = true}},
+    extensions = {
+      ["ui-select"] = {
+        require('telescope.themes').get_dropdown {}
+      }
+    },
   }
   -- TODO: Integrate with Trouble.
   telescope.setup(options)
+  require("telescope").load_extension("ui-select")
 end
 
 local function trouble_config()
@@ -42,8 +48,9 @@ function M.setup(use)
     'nvim-telescope/telescope.nvim',
     requires = {'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons'},
     config = telescope_config,
-    module = 'telescope',
-    cmd = {'Telescope'},
+  }
+  use {
+    'nvim-telescope/telescope-ui-select.nvim'
   }
   use {
     'folke/trouble.nvim',
