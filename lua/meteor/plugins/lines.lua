@@ -37,6 +37,9 @@ local function bufferline_config()
     elseif group == 'modified' then
       guifg = '#afffff';
       guifg_sel = '#afffff'
+    elseif group == 'pick' then
+      guifg = '#d05020'
+      guifg_sel = '#d05020'
     end
 
     local normal_group = group;

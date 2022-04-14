@@ -53,6 +53,8 @@ function M.setup(opt)
     noresimap('n', 'H', '<Cmd>BufferLineCyclePrev<CR>')
     noresimap('n', '<leader>L', '<Cmd>BufferLineMoveNext<CR>')
     noresimap('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
+    noresimap('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
+    noresimap('n', '<leader>a', '<Cmd>BufferLinePick<CR>')
   else
     noresimap('n', '<leader>l', ':bnext<CR>')
     noresimap('n', 'L', ':bnext<CR>')
@@ -61,6 +63,7 @@ function M.setup(opt)
     noresimap('n', '<leader>q', ':bdelete<CR>')
   end
   noresimap('n', '<leader>q', '<Cmd>:bdelete<CR>')
+  noresimap('n', '<localleader>q', '<Cmd>:bdelete<CR>')
   noresimap('n', '<leader><leader>', '<Cmd>b #<CR>')
   if opt.telescope then
     noresimap('n', '<leader>b', '<Cmd>Telescope buffers<CR>')

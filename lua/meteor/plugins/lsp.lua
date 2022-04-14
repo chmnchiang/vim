@@ -208,6 +208,7 @@ function M.setup(use)
     requires = {'hrsh7th/cmp-nvim-lsp'},
     config = lsp_config,
     ft = M.lsp_enabled_filetypes,
+    module = 'lspconfig',
   }
   use {
     'ray-x/lsp_signature.nvim',

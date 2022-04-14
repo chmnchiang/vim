@@ -33,6 +33,10 @@ local function setup_vim_settings()
   vim.opt.completeopt:remove('preview')
   vim.opt.pumheight = 15
 
+  vim.opt.list = true
+  vim.opt.listchars = 'tab:» ,extends:›,precedes:‹,nbsp:·,trail:·'
+  vim.opt.showbreak = '↳'
+
   vim.opt.signcolumn = 'yes'
   -- Incremental replace with preview
   vim.opt.inccommand = 'nosplit'

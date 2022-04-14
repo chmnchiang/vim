@@ -59,6 +59,7 @@ function M.setup(use)
     'hrsh7th/nvim-cmp',
     requires = {'onsails/lspkind-nvim'},
     config = nvim_cmp_setup,
+    module = 'cmp',
     event = {'InsertEnter', 'CmdlineEnter'},
   }
   use {'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp'}
