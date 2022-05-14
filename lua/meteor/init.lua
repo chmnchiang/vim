@@ -42,6 +42,8 @@ local function setup_vim_settings()
   vim.opt.inccommand = 'nosplit'
   -- Default splitting to the right.
   vim.opt.splitright = true
+  -- Use a single status line
+  vim.opt.laststatus = 3
   -- Restore the cursor to the line when reopen a file.
   vim.cmd [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
   -- Open :help vertically

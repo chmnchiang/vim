@@ -35,7 +35,7 @@ local function nvim_cmp_setup()
         vim.fn['UltiSnips#Anon'](args.body)
       end,
     },
-    mapping = {
+    mapping = cmp.mapping.preset.insert {
       ['<C-d>'] = cmp.mapping.scroll_docs(4),
       ['<C-f>'] = cmp.mapping.scroll_docs(-4),
       ['<C-Space>'] = cmp.mapping.complete(),
@@ -48,8 +48,9 @@ local function nvim_cmp_setup()
     },
     formatting = {format = format},
   }
-  cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}})
+  cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}, mapping=cmp.mapping.preset.cmdline(),})
   cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
   })
 end

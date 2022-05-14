@@ -110,27 +110,36 @@ local function lsp_config()
       vim.lsp.handlers.signature_help,
       {border = require'meteor.plugins.lsp'.floating_window_border})
 
-  local function get_capabilities()
-    return require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol
-                                                           .make_client_capabilities())
-  end
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp
+                                                                       .protocol
+                                                                       .make_client_capabilities())
   local on_attach = require('meteor.plugins.lsp').lsp_on_attach
 
-  local servers = {'rust_analyzer', 'tsserver', 'pyright', 'texlab', 'clangd'}
-  for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup {
+  local function setup_lsp(lsp_name, options)
+    if options == nil then
+      options = {}
+    end
+    options = vim.tbl_extend('keep', options, {
       on_attach = on_attach,
-      capabilities = get_capabilities(),
-    }
+      capabilities = capabilities,
+    })
+    nvim_lsp[lsp_name].setup {}
   end
+
+  setup_lsp('rust_analyzer', {
+    settings = {['rust-analyzer'] = {checkOnSave = {command = 'clippy'}}},
+  })
+
+  setup_lsp('tsserver')
+  setup_lsp('pyright')
+  setup_lsp('textlab')
+  setup_lsp('clangd')
 
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, 'lua/?.lua')
   table.insert(runtime_path, 'lua/?/init.lua')
 
-  nvim_lsp['sumneko_lua'].setup {
-    on_attach = on_attach,
-    capabilities = get_capabilities(),
+  setup_lsp('sumneko_lua', {
     cmd = {'lua-language-server'},
     settings = {
       Lua = {
@@ -140,7 +149,7 @@ local function lsp_config()
         telemetry = {enable = false},
       },
     },
-  }
+  })
 
   local lua_format_options = {
     ['column-limit'] = 80,
@@ -170,7 +179,7 @@ local function lsp_config()
   end
   local lua_format_options_str = table.concat(lua_format_options_str_list, ' ')
 
-  nvim_lsp['efm'].setup {
+  setup_lsp('efm', {
     init_options = {documentFormatting = true},
     on_attach = on_attach,
     filetypes = {'lua'},
@@ -186,7 +195,7 @@ local function lsp_config()
         },
       },
     },
-  }
+  })
 
   local function define_diagnostic_symbol(name, icon)
     vim.fn.sign_define('DiagnosticSign' .. name, {

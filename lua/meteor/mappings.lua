@@ -14,17 +14,17 @@ function M.setup(opt)
   local simap = require'meteor.utils'.simap
   local noresimap = require'meteor.utils'.noresimap
   -- Swap j <-> gj, k <-> gk. It is more intuitive when moving in long lines.
-  noremap('n', 'j', 'gj')
-  noremap('n', 'k', 'gk')
-  noremap('n', 'gj', 'j')
-  noremap('n', 'gk', 'k')
+  vim.keymap.set('n', 'j', 'gj')
+  vim.keymap.set('n', 'k', 'gk')
+  vim.keymap.set('n', 'gj', 'j')
+  vim.keymap.set('n', 'gk', 'k')
   -- Swap 0 <-> ^. 0 is easier to press while the original ^ is more useful.
   noremap('n', '0', '^')
   noremap('n', '^', '0')
   noremap('v', '0', '^')
   noremap('v', '^', '0')
   -- Swap : <-> ,. We use : more often so it deserves a non-shift modified key.
-  noremap('n', ':', ',')
+  vim.keymap.set('n', ':', ',')
   noremap('n', ',', ':')
   noremap('v', ':', ',')
   noremap('v', ',', ':')
