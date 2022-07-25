@@ -1,37 +1,18 @@
 local M = {}
 
-function M.noremap(mode, lhs, rhs, opts)
-  if opts == nil then
-    opts = {}
-  end
-  opts.noremap = true
-  vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
-end
-
 function M.simap(mode, lhs, rhs, opts)
   if opts == nil then
     opts = {}
   end
   opts.silent = true
-  vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
-end
-
-function M.noresimap(mode, lhs, rhs, opts)
-  if opts == nil then
-    opts = {}
-  end
-  opts.noremap = true
-  opts.silent = true
-  vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
+  vim.keymap.set(mode, lhs, rhs, opts)
 end
 
 function M.get_highlight_color(name, typ)
   if typ == 'fg' then
-    return string.format('#%06x',
-        vim.api.nvim_get_hl_by_name(name, true).foreground)
+    return string.format('#%06x', vim.api.nvim_get_hl_by_name(name, true).foreground)
   elseif typ == 'bg' then
-    return string.format('#%06x',
-        vim.api.nvim_get_hl_by_name(name, true).background)
+    return string.format('#%06x', vim.api.nvim_get_hl_by_name(name, true).background)
   end
 end
 
@@ -43,8 +24,9 @@ function M.lsp_readiness()
     return ' '
   end
   local current_time = os.time()
-  if last_readiness_check_time == nil or
-      os.difftime(current_time, last_readiness_check_time) >= 5 then
+  if
+    last_readiness_check_time == nil or os.difftime(current_time, last_readiness_check_time) >= 5
+  then
     last_readiness = vim.lsp.buf.server_ready()
     last_readiness_check_time = current_time
   end

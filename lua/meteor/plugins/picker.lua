@@ -13,25 +13,26 @@ local function telescope_config()
         },
       },
       layout_strategy = 'vertical',
-      layout_config = {vertical = {width = 0.8, height = {padding = 1}}},
-      path_display = {'truncate'},
+      layout_config = { vertical = { width = 0.8, height = { padding = 1 } } },
+      path_display = { 'truncate' },
     },
-    pickers = {buffers = {sort_mru = true}},
+    pickers = { buffers = { sort_mru = true } },
     extensions = {
-      ["ui-select"] = {
-        require('telescope.themes').get_dropdown {}
-      }
+      ['ui-select'] = {
+        require('telescope.themes').get_dropdown({}),
+      },
     },
   }
   -- TODO: Integrate with Trouble.
   telescope.setup(options)
-  require("telescope").load_extension("ui-select")
+  require('telescope').load_extension('ui-select')
 end
 
 local function trouble_config()
   local trouble = require('trouble')
   local icons = require('meteor.icons')
-  trouble.setup {
+  trouble.setup({
+    auto_close = true,
     use_diagnostic_signs = true,
     signs = {
       error = icons.error,
@@ -40,23 +41,24 @@ local function trouble_config()
       information = icons.info,
       other = icons.question,
     },
-  }
+  })
 end
 
 function M.setup(use)
-  use {
+  use({
     'nvim-telescope/telescope.nvim',
-    requires = {'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons'},
+    requires = { 'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons' },
     config = telescope_config,
-  }
-  use {
-    'nvim-telescope/telescope-ui-select.nvim'
-  }
-  use {
+  })
+  use({
+    'nvim-telescope/telescope-ui-select.nvim',
+  })
+  use({
     'folke/trouble.nvim',
     config = trouble_config,
-    cmd = {'Trouble', 'TroubleToggle'},
-  }
+    module = 'trouble',
+    cmd = { 'Trouble', 'TroubleToggle' },
+  })
 end
 
 return M

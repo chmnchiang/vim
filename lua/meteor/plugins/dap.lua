@@ -14,8 +14,7 @@ local function dap_config()
       type = 'lldb',
       request = 'launch',
       program = function()
-        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/',
-            'file')
+        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
       end,
       cwd = '${workspaceFolder}',
       stopOnEntry = false,
@@ -45,15 +44,13 @@ local function dap_config()
     },
   }
   dap.adapters.nlua = function(callback, config)
-    callback({type = 'server', host = config.host, port = config.port})
+    callback({ type = 'server', host = config.host, port = config.port })
   end
 
-  vim.fn.sign_define('DapBreakpoint', {text = ' ', texthl = 'DapBreakpoint'})
-  vim.fn.sign_define('DapBreakpointCondition',
-      {text = ' ', texthl = 'DapBreakpointCondition'})
-  vim.fn.sign_define('DapBreakpointRejected',
-      {text = ' ', texthl = 'DapBreakpointRejected'})
-  vim.fn.sign_define('DapLogPoint', {text = ' ', texthl = 'DapLogPoint'})
+  vim.fn.sign_define('DapBreakpoint', { text = ' ', texthl = 'DapBreakpoint' })
+  vim.fn.sign_define('DapBreakpointCondition', { text = ' ', texthl = 'DapBreakpointCondition' })
+  vim.fn.sign_define('DapBreakpointRejected', { text = ' ', texthl = 'DapBreakpointRejected' })
+  vim.fn.sign_define('DapLogPoint', { text = ' ', texthl = 'DapLogPoint' })
   vim.fn.sign_define('DapStopped', {
     text = ' ',
     texthl = 'DapStopped',
@@ -64,7 +61,7 @@ end
 local function dap_ui_config()
   local dapui = require('dapui')
   local dap = require('dap')
-  dapui.setup {}
+  dapui.setup({})
   dap.listeners.after.event_initialized['dapui_config'] = function()
     dapui.open()
   end
@@ -81,27 +78,27 @@ local function dap_python_config()
 end
 
 function M.setup(use)
-  use {'mfussenegger/nvim-dap', config = dap_config, module = 'dap'}
-  use {
+  use({ 'mfussenegger/nvim-dap', config = dap_config, module = 'dap' })
+  use({
     'theHamsta/nvim-dap-virtual-text',
     after = 'nvim-dap',
     config = function()
-      require('nvim-dap-virtual-text').setup {}
+      require('nvim-dap-virtual-text').setup({})
     end,
-  }
-  use {
+  })
+  use({
     'rcarriga/nvim-dap-ui',
-    requires = {'mfussenegger/nvim-dap'},
+    requires = { 'mfussenegger/nvim-dap' },
     config = dap_ui_config,
     after = 'nvim-dap',
     module = 'dapui',
-  }
-  use {
+  })
+  use({
     'mfussenegger/nvim-dap-python',
     ft = 'python',
     config = dap_python_config,
-  }
-  use {'jbyuki/one-small-step-for-vimkind', ft = 'lua'}
+  })
+  use({ 'jbyuki/one-small-step-for-vimkind', ft = 'lua' })
 end
 
 return M

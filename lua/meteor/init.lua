@@ -1,8 +1,11 @@
 local M = {}
+local log = require('meteor.log')
 
 local function setup_colorscheme()
   vim.opt.termguicolors = true
-  vim.cmd [[colorscheme meteor-nvim]]
+  if not pcall(vim.cmd, [[colorscheme meteor-nvim]]) then
+    log.error[[fail to set the colorscheme to meteor-nvim]]
+  end
 end
 
 local function setup_vim_settings()
@@ -45,14 +48,16 @@ local function setup_vim_settings()
   -- Use a single status line
   vim.opt.laststatus = 3
   -- Restore the cursor to the line when reopen a file.
-  vim.cmd [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
+  vim.cmd(
+    [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
+  )
   -- Open :help vertically
-  vim.cmd [[
+  vim.cmd([[
     augroup vimrc_help
     autocmd!
     autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
     augroup END
-  ]]
+  ]])
 end
 
 function M.setup(opt)
@@ -62,10 +67,11 @@ function M.setup(opt)
   -- Setup colorscheme first because a lot of config use it.
   setup_colorscheme()
   -- Setup plugins
-  require'packer'.startup(function(use)
-    use 'wbthomason/packer.nvim'
+  require('packer').startup(function(use)
+    use('wbthomason/packer.nvim')
     require('meteor.plugins.colortheme').setup(use)
     require('meteor.plugins.common').setup(use)
+    require('meteor.plugins.filetype').setup(use)
     require('meteor.plugins.lsp').setup(use)
     require('meteor.plugins.treesitter').setup(use)
     require('meteor.plugins.lines').setup(use)

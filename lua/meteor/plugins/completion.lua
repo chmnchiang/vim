@@ -1,13 +1,13 @@
 local M = {}
 
 local function nvim_cmp_setup()
-  local cmp = require 'cmp'
-  local utils = require 'meteor.utils'
+  local cmp = require('cmp')
+  local utils = require('meteor.utils')
   local has_lspkind, lspkind = pcall(require, 'lspkind')
 
   local lspkind_format = nil
   if has_lspkind then
-    lspkind_format = lspkind.cmp_format {
+    lspkind_format = lspkind.cmp_format({
       with_text = true,
       menu = {
         buffer = '[Buffer]',
@@ -15,8 +15,8 @@ local function nvim_cmp_setup()
         path = '[Path]',
         ultisnips = '[Snip]',
       },
-    }
-    vim.cmd [[highlight CmpItemAbbr guifg=#b0b0b0]]
+    })
+    vim.cmd([[highlight CmpItemAbbr guifg=#b0b0b0]])
   end
 
   local format = function(entry, vim_item)
@@ -28,46 +28,51 @@ local function nvim_cmp_setup()
     end
   end
 
-  cmp.setup {
+  cmp.setup({
     snippet = {
       expand = function(args)
         print('expand')
         vim.fn['UltiSnips#Anon'](args.body)
       end,
     },
-    mapping = cmp.mapping.preset.insert {
+    mapping = cmp.mapping.preset.insert({
       ['<C-d>'] = cmp.mapping.scroll_docs(4),
       ['<C-f>'] = cmp.mapping.scroll_docs(-4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm {select = false},
-    },
+      ['<CR>'] = cmp.mapping.confirm({ select = false }),
+    }),
     sources = {
-      {name = 'nvim_lsp'}, {name = 'buffer'}, {name = 'path'},
-      {name = 'ultisnips'},
+      { name = 'nvim_lsp' },
+      { name = 'buffer' },
+      { name = 'path' },
+      { name = 'ultisnips' },
     },
-    formatting = {format = format},
-  }
-  cmp.setup.cmdline('/', {sources = {{name = 'buffer'}}, mapping=cmp.mapping.preset.cmdline(),})
+    formatting = { format = format },
+  })
+  cmp.setup.cmdline('/', {
+    sources = { { name = 'buffer' } },
+    mapping = cmp.mapping.preset.cmdline(),
+  })
   cmp.setup.cmdline(':', {
     mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({{name = 'path'}}, {{name = 'cmdline'}}),
+    sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
   })
 end
 
 function M.setup(use)
-  use {
+  use({
     'hrsh7th/nvim-cmp',
-    requires = {'onsails/lspkind-nvim'},
+    requires = { 'onsails/lspkind-nvim' },
     config = nvim_cmp_setup,
     module = 'cmp',
-    event = {'InsertEnter', 'CmdlineEnter'},
-  }
-  use {'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp'}
-  use {'hrsh7th/cmp-buffer', after = 'nvim-cmp'}
-  use {'hrsh7th/cmp-path', after = 'nvim-cmp'}
-  use {'hrsh7th/cmp-cmdline', after = 'nvim-cmp'}
-  use {'quangnguyen30192/cmp-nvim-ultisnips', event = 'InsertEnter'}
+    event = { 'InsertEnter', 'CmdlineEnter' },
+  })
+  use({ 'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp' })
+  use({ 'hrsh7th/cmp-buffer', after = 'nvim-cmp' })
+  use({ 'hrsh7th/cmp-path', after = 'nvim-cmp' })
+  use({ 'hrsh7th/cmp-cmdline', after = 'nvim-cmp' })
+  use({ 'quangnguyen30192/cmp-nvim-ultisnips', event = 'InsertEnter' })
 end
 
 return M
