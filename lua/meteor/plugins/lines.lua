@@ -59,16 +59,16 @@ local function bufferline_config()
       end
 
       if group ~= 'indicator' then
-        bufferline_highlights[normal_group] = { guibg = guibg, guifg = guifg }
+        bufferline_highlights[normal_group] = { bg = guibg, fg = guifg }
         bufferline_highlights[group .. '_visible'] = {
-          guibg = guibg,
-          guifg = guifg,
+          bg = guibg,
+          fg = guifg,
         }
       end
 
       bufferline_highlights[group .. '_selected'] = {
-        guibg = guibg_sel,
-        guifg = guifg_sel,
+        bg = guibg_sel,
+        fg = guifg_sel,
       }
     end
     return bufferline_highlights
@@ -78,7 +78,11 @@ local function bufferline_config()
     bufferline_highlights = nil
   end
 
-  require('bufferline').setup({
+  local buf_sorter = require('meteor.buf_sorter')
+  buf_sorter.setup()
+
+  local bufferline = require('bufferline')
+  bufferline.setup({
     options = {
       separator_style = 'slant',
       show_buffer_close_icons = false,
@@ -93,6 +97,7 @@ local function bufferline_config()
         })[level]
         return ' ' .. icon .. count
       end,
+      sort_by = buf_sorter.sort_by_last_modify_func,
     },
     highlights = bufferline_highlights,
   })
@@ -113,10 +118,10 @@ local function lualine_config()
       },
     },
     sections = {
-      lualine_a = { 'mode', 'location' },
-      lualine_b = { 'finename' },
+      lualine_a = { 'location', 'progress' },
+      lualine_b = { 'filetype' },
       lualine_c = {
-        require('meteor.utils').lsp_readiness,
+        'filename',
         {
           'diagnostics',
           sources = { 'nvim_diagnostic' },
@@ -135,11 +140,13 @@ local function lualine_config()
         },
       },
       lualine_x = {
+        require('meteor.utils').lsp_readiness,
+      },
+      lualine_y = {
         { 'signify_diff', symbols = { added = '+', modified = '~', removed = '-' } },
         'branch',
       },
-      lualine_y = { 'encoding', 'fileformat', 'filetype' },
-      lualine_z = { 'progress' },
+      lualine_z = { 'mode' },
     },
   })
 end

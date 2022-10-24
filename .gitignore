@@ -1,3 +1,4 @@
 .init.vim
 plugged
 plugin
+lua/meteor/plugins/experiments.lua

@@ -10,7 +10,6 @@ function M.setup(opt)
   vim.g.mapleader = '\\'
   vim.g.maplocalleader = ' '
 
-  local simap = require('meteor.utils').simap
   -- Swap j <-> gj, k <-> gk. It is more intuitive when moving in long lines.
   vim.keymap.set('', 'j', 'gj')
   vim.keymap.set('', 'k', 'gk')
@@ -36,60 +35,75 @@ function M.setup(opt)
   vim.keymap.set('n', '<C-Down>', '<C-w>-')
   -- Make H and L navigate buffers.
   -- Nerd Commenter
-  simap(
+  vim.keymap.set(
     'n',
     '<Localleader>ca',
     '<Plug>NERDCommenterAltDelims',
     { desc = 'Change the comment chars' }
   )
-  simap(
+  vim.keymap.set(
     'n',
     '<Localleader>cA',
     '<Plug>NERDCommenterAppend',
     { desc = 'Add comment at the end of line' }
   )
-  simap({'n', 'x'}, '<Localleader>c<Localleader>', '<Plug>NERDCommenterToggle', {desc = 'Toggle comments'})
-  simap({'n', 'x'}, '<Localleader>cc', '<Plug>NERDCommenterComment', {desc = 'Comments the current line/selection'})
+  vim.keymap.set(
+    { 'n', 'x' },
+    '<Localleader>c<Localleader>',
+    '<Plug>NERDCommenterToggle',
+    { desc = 'Toggle comments' }
+  )
+  vim.keymap.set(
+    { 'n', 'x' },
+    '<Localleader>cc',
+    '<Plug>NERDCommenterComment',
+    { desc = 'Comments the current line/selection' }
+  )
   if opt.tabline then
-    simap('n', '<leader>l', '<Cmd>BufferLineCycleNext<CR>')
-    simap('n', 'L', '<Cmd>BufferLineCycleNext<CR>')
-    simap('n', '<leader>h', '<Cmd>BufferLineCyclePrev<CR>')
-    simap('n', 'H', '<Cmd>BufferLineCyclePrev<CR>')
-    simap('n', '<leader>L', '<Cmd>BufferLineMoveNext<CR>')
-    simap('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
-    simap('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
-    simap('n', 'S', '<Cmd>BufferLinePick<CR>')
+    vim.keymap.set('n', '<leader>l', '<Cmd>BufferLineCycleNext<CR>')
+    vim.keymap.set('n', 'L', '<Cmd>BufferLineCycleNext<CR>')
+    vim.keymap.set('n', '<leader>h', '<Cmd>BufferLineCyclePrev<CR>')
+    vim.keymap.set('n', 'H', '<Cmd>BufferLineCyclePrev<CR>')
+    vim.keymap.set('n', '<leader>L', '<Cmd>BufferLineMoveNext<CR>')
+    vim.keymap.set('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
+    vim.keymap.set('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
+    vim.keymap.set('n', 'S', '<Cmd>BufferLinePick<CR>')
   else
-    simap('n', '<leader>l', ':bnext<CR>')
-    simap('n', 'L', ':bnext<CR>')
-    simap('n', '<leader>h', ':bprev<CR>')
-    simap('n', 'H', ':bprev<CR>')
+    vim.keymap.set('n', '<leader>l', ':bnext<CR>')
+    vim.keymap.set('n', 'L', ':bnext<CR>')
+    vim.keymap.set('n', '<leader>h', ':bprev<CR>')
+    vim.keymap.set('n', 'H', ':bprev<CR>')
   end
-  simap('n', '<leader>q', '<Cmd>bdelete<CR>')
-  simap('n', '<localleader>q', '<Cmd>bdelete<CR>')
-  simap('n', '<leader><leader>', '<Cmd>b #<CR>', {desc = 'Switch to previous buffer'})
+  vim.keymap.set('n', '<leader>q', '<Cmd>bdelete<CR>')
+  vim.keymap.set('n', '<localleader>q', '<Cmd>bdelete<CR>')
+  vim.keymap.set('n', '<leader><leader>', '<Cmd>b #<CR>', { desc = 'Switch to previous buffer' })
   if opt.telescope then
-    simap('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
-    simap('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
-    simap('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
-    simap('n', '<leader>r', '<Cmd>Telescope resume<CR>', {desc = 'Resume the last Telescope'})
-    simap('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
+    vim.keymap.set('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
+    vim.keymap.set('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
+    vim.keymap.set('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
+    vim.keymap.set(
+      'n',
+      '<leader>r',
+      '<Cmd>Telescope resume<CR>',
+      { desc = 'Resume the last Telescope' }
+    )
+    vim.keymap.set('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
   end
   if opt.nvim_tree then
-    simap('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
+    vim.keymap.set('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
   end
   if opt.dap then
-    simap('n', '<leader>dt', [[<Cmd>lua require('dap').toggle_breakpoint()<CR>]])
-    simap('n', '<leader>dc', [[<Cmd>lua require('dap').continue()<CR>]])
-    simap('n', '<leader>ds', [[<Cmd>lua require('dap').step_over()<CR>]])
-    simap('n', '<leader>di', [[<Cmd>lua require('dap').step_into()<CR>]])
-    simap('n', '<leader>do', [[<Cmd>lua require('dap').step_out()<CR>]])
-    simap('n', '<leader>du', [[<Cmd>lua require('dap').up()<CR>]])
-    simap('n', '<leader>dd', [[<Cmd>lua require('dap').down()<CR>]])
-    simap('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
-    simap('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
+    vim.keymap.set('n', '<leader>dt', [[<Cmd>lua require('dap').toggle_breakpoint()<CR>]])
+    vim.keymap.set('n', '<leader>dc', [[<Cmd>lua require('dap').continue()<CR>]])
+    vim.keymap.set('n', '<leader>ds', [[<Cmd>lua require('dap').step_over()<CR>]])
+    vim.keymap.set('n', '<leader>di', [[<Cmd>lua require('dap').step_into()<CR>]])
+    vim.keymap.set('n', '<leader>do', [[<Cmd>lua require('dap').step_out()<CR>]])
+    vim.keymap.set('n', '<leader>du', [[<Cmd>lua require('dap').up()<CR>]])
+    vim.keymap.set('n', '<leader>dd', [[<Cmd>lua require('dap').down()<CR>]])
+    vim.keymap.set('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
+    vim.keymap.set('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
   end
-  simap('', 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
+  vim.keymap.set('', 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
 end
 
 function M.setup_lsp_keymaps(bufnr)
@@ -126,14 +140,14 @@ function M.setup_lsp_keymaps(bufnr)
   keymap_set(
     'n',
     '<Localleader>g',
-    '<Cmd>Trouble document_diagnostics<CR>',
-    { desc = 'Show diagnostics in current file' }
+    '<Cmd>TroubleToggle document_diagnostics<CR>',
+    { desc = 'Toggle diagnostics in current file' }
   )
   keymap_set(
     'n',
     '<Leader>g',
-    '<Cmd>Trouble workspace_diagnostics<CR>',
-    { desc = 'Show diagnostic across project' }
+    '<Cmd>TroubleToggle workspace_diagnostics<CR>',
+    { desc = 'Toggle diagnostic across project' }
   )
   keymap_set('', '[g', function()
     vim.diagnostic.goto_prev({ float = { border = floating_window_border } })
@@ -141,10 +155,15 @@ function M.setup_lsp_keymaps(bufnr)
   keymap_set('', ']g', function()
     vim.diagnostic.goto_next({ float = { border = floating_window_border } })
   end, { desc = 'Jump to next diagnostic' })
-  keymap_set('n', '<Localleader>a', vim.lsp.buf.code_action, { desc = 'Show code actions' })
-  keymap_set('v', '<Localleader>a', vim.lsp.buf.range_code_action, { desc = 'Show code actions' })
-  keymap_set('n', '<Localleader>f', vim.lsp.buf.formatting, { desc = 'Format current file' })
-  keymap_set('v', '<Localleader>f', vim.lsp.buf.range_formatting, { desc = 'Format current range' })
+  keymap_set(
+    { 'n', 'v' },
+    '<Localleader>a',
+    vim.lsp.buf.code_action,
+    { desc = 'Show code actions' }
+  )
+  keymap_set({ 'n', 'v' }, '<Localleader>f', function()
+    vim.lsp.buf.format({ async = true })
+  end, { desc = 'Format current file' })
   keymap_set(
     'n',
     '<Localleader>d',

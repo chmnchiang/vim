@@ -2,10 +2,9 @@ local M = {}
 
 local function nvim_tree_config()
   local icons = require('meteor.icons')
-  vim.g.nvim_tree_respect_buf_cwd = 0
 
   require('nvim-tree').setup({
-    auto_close = true,
+    respect_buf_cwd = false,
     diagnostics = {
       enable = true,
       icons = {

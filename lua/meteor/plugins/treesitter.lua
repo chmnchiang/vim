@@ -15,8 +15,16 @@ local function treesitter_config()
       'json',
     },
     highlight = { enable = true, additional_vim_regex_highlighting = false },
-    incremental_selection = { enable = true },
-    playground = { enable = false },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = '<CR>',
+        scope_incremental = '<Tab>',
+        node_incremental = '<CR>',
+        node_decremental = '<S-CR>',
+      },
+    },
+    playground = { enable = true },
   })
 end
 

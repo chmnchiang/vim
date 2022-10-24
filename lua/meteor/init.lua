@@ -4,15 +4,16 @@ local log = require('meteor.log')
 local function setup_colorscheme()
   vim.opt.termguicolors = true
   if not pcall(vim.cmd, [[colorscheme meteor-nvim]]) then
-    log.error[[fail to set the colorscheme to meteor-nvim]]
+    log.error([[fail to set the colorscheme to meteor-nvim]])
   end
 end
 
 local function setup_vim_settings()
-  vim.opt.expandtab = true
+  -- Set tab size = 2 and use spaces.
   vim.opt.tabstop = 2
   vim.opt.shiftwidth = 2
   vim.opt.softtabstop = 2
+  vim.opt.expandtab = true
 
   vim.opt.number = true
   vim.opt.relativenumber = true

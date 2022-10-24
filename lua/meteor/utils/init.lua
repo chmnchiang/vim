@@ -1,13 +1,5 @@
 local M = {}
 
-function M.simap(mode, lhs, rhs, opts)
-  if opts == nil then
-    opts = {}
-  end
-  opts.silent = true
-  vim.keymap.set(mode, lhs, rhs, opts)
-end
-
 function M.get_highlight_color(name, typ)
   if typ == 'fg' then
     return string.format('#%06x', vim.api.nvim_get_hl_by_name(name, true).foreground)
@@ -16,21 +8,11 @@ function M.get_highlight_color(name, typ)
   end
 end
 
-local last_readiness_check_time = nil
-local last_readiness = false
-
 function M.lsp_readiness()
-  if next(vim.lsp.buf_get_clients(0)) == nil then
+  if #vim.lsp.buf_get_clients(0) == 0 then
     return ' '
   end
-  local current_time = os.time()
-  if
-    last_readiness_check_time == nil or os.difftime(current_time, last_readiness_check_time) >= 5
-  then
-    last_readiness = vim.lsp.buf.server_ready()
-    last_readiness_check_time = current_time
-  end
-  return 'LSP ' .. (last_readiness and ' ' or '痢')
+  return 'LSP  '
 end
 
 function M.trim(s, max_len)

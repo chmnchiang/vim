@@ -31,7 +31,6 @@ local function nvim_cmp_setup()
   cmp.setup({
     snippet = {
       expand = function(args)
-        print('expand')
         vim.fn['UltiSnips#Anon'](args.body)
       end,
     },

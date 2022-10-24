@@ -27,6 +27,7 @@ M.lsp_enabled_filetypes = {
   'bib',
   'rust',
   'lua',
+  'dart',
 }
 
 function M.lsp_on_attach(client, bufnr)
@@ -35,20 +36,20 @@ function M.lsp_on_attach(client, bufnr)
   end
 
   require('meteor.mappings').setup_lsp_keymaps(bufnr)
-  if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec(
-      [[
-      hi link LspReferenceRead Search
-      hi link LspReferenceText Search
-      hi link LspReferenceWrite Search
-      augroup lsp_document_highlight
-      autocmd! * <buffer>
-      autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-      autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-      ]],
-      false
-    )
+  if client.server_capabilities.documentHighlightProvider then
+    local augroup = vim.api.nvim_create_augroup('lsp_document_highlight', {})
+    vim.api.nvim_create_autocmd('CursorHold', {
+      group = augroup,
+      buffer = 0,
+      desc = 'Highlight cursor variable by LSP document highlight',
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      group = augroup,
+      buffer = 0,
+      desc = 'Clear document highlight after cursor moved',
+      callback = vim.lsp.buf.clear_references,
+    })
   end
 end
 
@@ -73,7 +74,7 @@ local function lsp_config()
   )
 
   local capabilities =
-    require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   local on_attach = require('meteor.plugins.lsp').lsp_on_attach
 
   local function setup_lsp(lsp_name, options)
@@ -95,6 +96,7 @@ local function lsp_config()
   setup_lsp('pyright')
   setup_lsp('texlab')
   setup_lsp('clangd')
+  setup_lsp('dartls')
 
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, 'lua/?.lua')
@@ -117,8 +119,6 @@ local function lsp_config()
       },
     },
     on_attach = function(client, bufnr)
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
       on_attach(client, bufnr)
