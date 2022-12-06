@@ -11,21 +11,24 @@ function M.setup(opt)
   vim.g.maplocalleader = ' '
 
   -- Swap j <-> gj, k <-> gk. It is more intuitive when moving in long lines.
-  vim.keymap.set('', 'j', 'gj')
-  vim.keymap.set('', 'k', 'gk')
-  vim.keymap.set('', 'gj', 'j')
-  vim.keymap.set('', 'gk', 'k')
+  vim.keymap.set({ 'n', 'x', 'o' }, 'j', 'gj')
+  vim.keymap.set({ 'n', 'x', 'o' }, 'k', 'gk')
+  vim.keymap.set({ 'n', 'x', 'o' }, 'gj', 'j')
+  vim.keymap.set({ 'n', 'x', 'o' }, 'gk', 'k')
   -- Swap 0 <-> ^. 0 is easier to press while the original ^ is more useful.
-  vim.keymap.set('', '0', '^')
-  vim.keymap.set('', '^', '0')
+  vim.keymap.set({ 'n', 'x', 'o' }, '0', '^')
+  vim.keymap.set({ 'n', 'x', 'o' }, '^', '0')
+  -- Swap ` <-> '. Jump to the exact location is used more often instead of jumping to the line.
+  vim.keymap.set({ 'n', 'x', 'o' }, "'", '`')
+  vim.keymap.set({ 'n', 'x', 'o' }, '`', "'")
   -- Swap : <-> ,. We use : more often so it deserves a non-shift modified key.
-  vim.keymap.set('', ':', ',')
-  vim.keymap.set('', ',', ':')
-  vim.keymap.set('', ':', ',')
-  vim.keymap.set('', ',', ':')
+  vim.keymap.set({ 'n', 'x' }, ':', ',')
+  vim.keymap.set({ 'n', 'x' }, ',', ':')
+  vim.keymap.set({ 'n', 'x' }, ':', ',')
+  vim.keymap.set({ 'n', 'x' }, ',', ':')
   -- Make +/- be increasing/decreasing the number.
-  vim.keymap.set({ 'n', 'v' }, '+', '<C-a>')
-  vim.keymap.set({ 'n', 'v' }, '-', '<C-x>')
+  vim.keymap.set({ 'n', 'x' }, '+', '<C-a>')
+  vim.keymap.set({ 'n', 'x' }, '-', '<C-x>')
   -- Tmux uses <C-a>. Let's use <C-b> instead.
   vim.keymap.set('i', '<C-b>', '<C-a>')
   -- Make window resizing easier.
@@ -33,32 +36,6 @@ function M.setup(opt)
   vim.keymap.set('n', '<C-Left>', '<C-w>2<')
   vim.keymap.set('n', '<C-Up>', '<C-w>+')
   vim.keymap.set('n', '<C-Down>', '<C-w>-')
-  -- Make H and L navigate buffers.
-  -- Nerd Commenter
-  vim.keymap.set(
-    'n',
-    '<Localleader>ca',
-    '<Plug>NERDCommenterAltDelims',
-    { desc = 'Change the comment chars' }
-  )
-  vim.keymap.set(
-    'n',
-    '<Localleader>cA',
-    '<Plug>NERDCommenterAppend',
-    { desc = 'Add comment at the end of line' }
-  )
-  vim.keymap.set(
-    { 'n', 'x' },
-    '<Localleader>c<Localleader>',
-    '<Plug>NERDCommenterToggle',
-    { desc = 'Toggle comments' }
-  )
-  vim.keymap.set(
-    { 'n', 'x' },
-    '<Localleader>cc',
-    '<Plug>NERDCommenterComment',
-    { desc = 'Comments the current line/selection' }
-  )
   if opt.tabline then
     vim.keymap.set('n', '<leader>l', '<Cmd>BufferLineCycleNext<CR>')
     vim.keymap.set('n', 'L', '<Cmd>BufferLineCycleNext<CR>')
@@ -103,7 +80,7 @@ function M.setup(opt)
     vim.keymap.set('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
     vim.keymap.set('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
   end
-  vim.keymap.set('', 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
+  vim.keymap.set({ 'n', 'x' }, 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
 end
 
 function M.setup_lsp_keymaps(bufnr)
@@ -149,19 +126,19 @@ function M.setup_lsp_keymaps(bufnr)
     '<Cmd>TroubleToggle workspace_diagnostics<CR>',
     { desc = 'Toggle diagnostic across project' }
   )
-  keymap_set('', '[g', function()
+  keymap_set({ 'n', 'x', 'o' }, '[g', function()
     vim.diagnostic.goto_prev({ float = { border = floating_window_border } })
   end, { desc = 'Jump to previous diagnostic' })
-  keymap_set('', ']g', function()
+  keymap_set({ 'n', 'x', 'o' }, ']g', function()
     vim.diagnostic.goto_next({ float = { border = floating_window_border } })
   end, { desc = 'Jump to next diagnostic' })
   keymap_set(
-    { 'n', 'v' },
+    { 'n', 'x' },
     '<Localleader>a',
     vim.lsp.buf.code_action,
     { desc = 'Show code actions' }
   )
-  keymap_set({ 'n', 'v' }, '<Localleader>f', function()
+  keymap_set({ 'n', 'x' }, '<Localleader>f', function()
     vim.lsp.buf.format({ async = true })
   end, { desc = 'Format current file' })
   keymap_set(

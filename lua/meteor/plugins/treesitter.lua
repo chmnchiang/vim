@@ -66,7 +66,7 @@ local function treesitter_textobjects_config()
       swap = {
         enable = true,
         swap_next = { ['<Localleader>sl'] = '@parameter.inner' },
-        swap_prev = { ['<Localleader>sh'] = '@parameter.inner' },
+        swap_previous = { ['<Localleader>sh'] = '@parameter.inner' },
       },
     },
   })

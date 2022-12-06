@@ -31,10 +31,6 @@ M.lsp_enabled_filetypes = {
 }
 
 function M.lsp_on_attach(client, bufnr)
-  local function buf_set_keymap(...)
-    vim.api.nvim_buf_set_keymap(bufnr, ...)
-  end
-
   require('meteor.mappings').setup_lsp_keymaps(bufnr)
   if client.server_capabilities.documentHighlightProvider then
     local augroup = vim.api.nvim_create_augroup('lsp_document_highlight', {})
@@ -125,34 +121,6 @@ local function lsp_config()
     end,
   })
 
-  local lua_format_options = {
-    ['column-limit'] = 80,
-    ['indent-width'] = 2,
-    ['keep-simple-control-block-one-line'] = false,
-    ['keep-simple-function-one-line'] = false,
-    ['double-quote-to-single-quote'] = true,
-    ['extra-sep-at-table-end'] = true,
-    ['align-args'] = false,
-    ['align-parameter'] = false,
-  }
-  local lua_format_options_str_list = {}
-  for name, value in pairs(lua_format_options) do
-    local option_str
-    if type(value) == 'boolean' then
-      if value then
-        option_str = '--' .. name
-      else
-        option_str = '--no-' .. name
-      end
-    elseif type(value) == 'number' then
-      option_str = string.format('--%s=%d', name, value)
-    else
-      error('expect option value to have type string|number')
-    end
-    table.insert(lua_format_options_str_list, option_str)
-  end
-  local lua_format_options_str = table.concat(lua_format_options_str_list, ' ')
-
   setup_lsp('efm', {
     init_options = { documentFormatting = true },
     on_attach = function() end,
@@ -162,7 +130,6 @@ local function lsp_config()
       languages = {
         lua = {
           {
-            --formatCommand = '/home/meteor/.luarocks/bin/lua-format -i ' .. lua_format_options_str,
             formatCommand = 'stylua -',
             formatStdin = true,
           },
@@ -206,8 +173,10 @@ function M.setup(use)
   })
   use({
     'simrat39/symbols-outline.nvim',
-    setup = function()
-      vim.g.symbols_outline = { auto_preview = false }
+    config = function()
+      require('symbols-outline').setup({
+        auto_preview = false,
+      })
     end,
     cmd = { 'SymbolsOutline' },
   })

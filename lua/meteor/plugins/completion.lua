@@ -14,6 +14,7 @@ local function nvim_cmp_setup()
         nvim_lsp = '[LSP]',
         path = '[Path]',
         ultisnips = '[Snip]',
+        luasnip = '[Snip]',
       },
     })
     vim.cmd([[highlight CmpItemAbbr guifg=#b0b0b0]])
@@ -31,7 +32,7 @@ local function nvim_cmp_setup()
   cmp.setup({
     snippet = {
       expand = function(args)
-        vim.fn['UltiSnips#Anon'](args.body)
+        require('luasnip').lsp_expand(args.body)
       end,
     },
     mapping = cmp.mapping.preset.insert({
@@ -43,9 +44,9 @@ local function nvim_cmp_setup()
     }),
     sources = {
       { name = 'nvim_lsp' },
-      { name = 'buffer' },
       { name = 'path' },
-      { name = 'ultisnips' },
+      { name = 'buffer' },
+      { name = 'luasnip' },
     },
     formatting = { format = format },
   })
@@ -71,7 +72,7 @@ function M.setup(use)
   use({ 'hrsh7th/cmp-buffer', after = 'nvim-cmp' })
   use({ 'hrsh7th/cmp-path', after = 'nvim-cmp' })
   use({ 'hrsh7th/cmp-cmdline', after = 'nvim-cmp' })
-  use({ 'quangnguyen30192/cmp-nvim-ultisnips', event = 'InsertEnter' })
+  use({ 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' })
 end
 
 return M

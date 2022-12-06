@@ -1,3 +1,4 @@
+vim.g.do_filetype_lua = 1
 require('meteor').setup({
   mappings = {
     tabline = true,
