@@ -75,4 +75,22 @@ function M.setup(use)
   use({ 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' })
 end
 
+function M.packages(opt)
+  return {
+    {
+      'hrsh7th/nvim-cmp',
+      dependencies = {
+        'onsails/lspkind-nvim',
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-cmdline',
+        'hrsh7th/cmp-nvim-lsp',
+        'saadparwaiz1/cmp_luasnip',
+      },
+      config = nvim_cmp_setup,
+      event = { 'InsertEnter', 'CmdlineEnter' },
+    },
+  }
+end
+
 return M

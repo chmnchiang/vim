@@ -1,6 +1,48 @@
 local M = {}
 local log = require('meteor.log')
 
+local function load_lazy_nvim(opt)
+  local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+  if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+      'git',
+      'clone',
+      '--filter=blob:none',
+      'https://github.com/folke/lazy.nvim.git',
+      '--branch=stable',
+      lazypath,
+    })
+  end
+  vim.opt.rtp:prepend(lazypath)
+
+  local function get_all_packages(modules)
+    local packages = {}
+    for _, module in ipairs(modules) do
+      vim.list_extend(packages, require(('meteor.plugins.%s'):format(module)).packages(opt))
+    end
+    return packages
+  end
+
+  local packages = get_all_packages({
+    'colorscheme',
+    'common',
+    'completion',
+    'dap',
+    'diff',
+    'filetype',
+    'lines',
+    'lsp',
+    'picker',
+    'snippet',
+    'treesitter',
+  })
+  require('lazy').setup(packages, {
+    defaults = {
+      lazy = true,
+    },
+  })
+end
+
 local function setup_colorscheme()
   vim.opt.termguicolors = true
   if not pcall(vim.cmd, [[colorscheme meteor-nvim]]) then
@@ -65,27 +107,31 @@ function M.setup(opt)
   if opt == nil then
     opt = {}
   end
-  -- Setup colorscheme first because a lot of config use it.
-  setup_colorscheme()
-  -- Setup plugins
-  require('packer').startup(function(use)
-    use('wbthomason/packer.nvim')
-    require('meteor.plugins.colortheme').setup(use)
-    require('meteor.plugins.common').setup(use)
-    require('meteor.plugins.filetype').setup(use)
-    require('meteor.plugins.lsp').setup(use)
-    require('meteor.plugins.treesitter').setup(use)
-    require('meteor.plugins.lines').setup(use)
-    require('meteor.plugins.picker').setup(use)
-    require('meteor.plugins.snippet').setup(use)
-    require('meteor.plugins.tree').setup(use)
-    require('meteor.plugins.completion').setup(use)
-    require('meteor.plugins.diff').setup(use)
-    require('meteor.plugins.dap').setup(use)
-    require('meteor.plugins.experiments').setup(use)
-  end)
-  setup_vim_settings()
+  if opt.use_lazy_nvim then
+    load_lazy_nvim(opt)
+  else
+    -- Setup colorscheme first because a lot of config use it.
+    setup_colorscheme()
+    -- Setup plugins
+    require('packer').startup(function(use)
+      use('wbthomason/packer.nvim')
+      require('meteor.plugins.colorscheme').setup(use)
+      require('meteor.plugins.common').setup(use)
+      require('meteor.plugins.filetype').setup(use)
+      require('meteor.plugins.lsp').setup(use)
+      require('meteor.plugins.treesitter').setup(use)
+      require('meteor.plugins.lines').setup(use)
+      require('meteor.plugins.picker').setup(use)
+      require('meteor.plugins.snippet').setup(use)
+      require('meteor.plugins.tree').setup(use)
+      require('meteor.plugins.completion').setup(use)
+      require('meteor.plugins.diff').setup(use)
+      require('meteor.plugins.dap').setup(use)
+      require('meteor.plugins.experiments').setup(use)
+    end)
+  end
   require('meteor.mappings').setup(opt.mappings)
+  setup_vim_settings()
 end
 
 return M

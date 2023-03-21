@@ -24,8 +24,6 @@ function M.setup(opt)
   -- Swap : <-> ,. We use : more often so it deserves a non-shift modified key.
   vim.keymap.set({ 'n', 'x' }, ':', ',')
   vim.keymap.set({ 'n', 'x' }, ',', ':')
-  vim.keymap.set({ 'n', 'x' }, ':', ',')
-  vim.keymap.set({ 'n', 'x' }, ',', ':')
   -- Make +/- be increasing/decreasing the number.
   vim.keymap.set({ 'n', 'x' }, '+', '<C-a>')
   vim.keymap.set({ 'n', 'x' }, '-', '<C-x>')
@@ -36,55 +34,79 @@ function M.setup(opt)
   vim.keymap.set('n', '<C-Left>', '<C-w>2<')
   vim.keymap.set('n', '<C-Up>', '<C-w>+')
   vim.keymap.set('n', '<C-Down>', '<C-w>-')
-  if opt.tabline then
-    vim.keymap.set('n', '<leader>l', '<Cmd>BufferLineCycleNext<CR>')
-    vim.keymap.set('n', 'L', '<Cmd>BufferLineCycleNext<CR>')
-    vim.keymap.set('n', '<leader>h', '<Cmd>BufferLineCyclePrev<CR>')
-    vim.keymap.set('n', 'H', '<Cmd>BufferLineCyclePrev<CR>')
-    vim.keymap.set('n', '<leader>L', '<Cmd>BufferLineMoveNext<CR>')
-    vim.keymap.set('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
-    vim.keymap.set('n', '<leader>H', '<Cmd>BufferLineMovePrev<CR>')
-    vim.keymap.set('n', 'S', '<Cmd>BufferLinePick<CR>')
-  else
-    vim.keymap.set('n', '<leader>l', ':bnext<CR>')
-    vim.keymap.set('n', 'L', ':bnext<CR>')
-    vim.keymap.set('n', '<leader>h', ':bprev<CR>')
-    vim.keymap.set('n', 'H', ':bprev<CR>')
+
+  vim.keymap.set('n', '<Leader>q', '<Cmd>qa<CR>')
+  vim.keymap.set('n', '<Localleader>q', '<Cmd>bdelete<CR>')
+  vim.keymap.set('n', '<Leader><leader>', '<Cmd>b #<CR>', { desc = 'Switch to previous buffer' })
+
+  local floating_window_border = require('meteor.plugins.lsp').floating_window_border
+  vim.keymap.set('n', '<Localleader>e', function()
+    vim.diagnostic.open_float({ border = floating_window_border })
+  end, { desc = 'Show error in current line' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[g', function()
+    vim.diagnostic.goto_prev({ float = { border = floating_window_border } })
+  end, { desc = 'Jump to previous diagnostic' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']g', function()
+    vim.diagnostic.goto_next({ float = { border = floating_window_border } })
+  end, { desc = 'Jump to next diagnostic' })
+
+  if not opt.use_lazy_nvim then
+    if opt.telescope then
+      vim.keymap.set('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
+      vim.keymap.set('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
+      vim.keymap.set('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
+      vim.keymap.set(
+        'n',
+        '<leader>r',
+        '<Cmd>Telescope resume<CR>',
+        { desc = 'Resume the last Telescope' }
+      )
+      vim.keymap.set('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
+    end
+    if opt.nvim_tree then
+      vim.keymap.set('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
+    end
+    if opt.dap then
+      vim.keymap.set('n', '<leader>dt', [[<Cmd>lua require('dap').toggle_breakpoint()<CR>]])
+      vim.keymap.set('n', '<leader>dc', [[<Cmd>lua require('dap').continue()<CR>]])
+      vim.keymap.set('n', '<leader>ds', [[<Cmd>lua require('dap').step_over()<CR>]])
+      vim.keymap.set('n', '<leader>di', [[<Cmd>lua require('dap').step_into()<CR>]])
+      vim.keymap.set('n', '<leader>do', [[<Cmd>lua require('dap').step_out()<CR>]])
+      vim.keymap.set('n', '<leader>du', [[<Cmd>lua require('dap').up()<CR>]])
+      vim.keymap.set('n', '<leader>dd', [[<Cmd>lua require('dap').down()<CR>]])
+      vim.keymap.set('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
+      vim.keymap.set('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
+    end
+    vim.keymap.set({ 'n', 'x' }, 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
   end
-  vim.keymap.set('n', '<leader>q', '<Cmd>bdelete<CR>')
-  vim.keymap.set('n', '<localleader>q', '<Cmd>bdelete<CR>')
-  vim.keymap.set('n', '<leader><leader>', '<Cmd>b #<CR>', { desc = 'Switch to previous buffer' })
-  if opt.telescope then
-    vim.keymap.set('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
-    vim.keymap.set('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
-    vim.keymap.set('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
-    vim.keymap.set(
-      'n',
-      '<leader>r',
-      '<Cmd>Telescope resume<CR>',
-      { desc = 'Resume the last Telescope' }
-    )
-    vim.keymap.set('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
+  M.setup_lsp_keymap_placeholders()
+end
+
+function M.setup_lsp_keymap_placeholders()
+  local function keymap_set(mode, lhs)
+    vim.keymap.set(mode, lhs, function()
+      vim.notify('LSP is not running in this buffer', vim.log.levels.INFO, {})
+    end, {})
   end
-  if opt.nvim_tree then
-    vim.keymap.set('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
-  end
-  if opt.dap then
-    vim.keymap.set('n', '<leader>dt', [[<Cmd>lua require('dap').toggle_breakpoint()<CR>]])
-    vim.keymap.set('n', '<leader>dc', [[<Cmd>lua require('dap').continue()<CR>]])
-    vim.keymap.set('n', '<leader>ds', [[<Cmd>lua require('dap').step_over()<CR>]])
-    vim.keymap.set('n', '<leader>di', [[<Cmd>lua require('dap').step_into()<CR>]])
-    vim.keymap.set('n', '<leader>do', [[<Cmd>lua require('dap').step_out()<CR>]])
-    vim.keymap.set('n', '<leader>du', [[<Cmd>lua require('dap').up()<CR>]])
-    vim.keymap.set('n', '<leader>dd', [[<Cmd>lua require('dap').down()<CR>]])
-    vim.keymap.set('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
-    vim.keymap.set('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
-  end
-  vim.keymap.set({ 'n', 'x' }, 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
+  keymap_set('n', 'K')
+  keymap_set('n', '<C-k>')
+  keymap_set('n', '<Localleader>e')
+  keymap_set('n', '<Localleader>r')
+  keymap_set('n', '<Localleader>o')
+  keymap_set('n', '<Localleader>O')
+  keymap_set('n', '<Leader>O')
+  keymap_set('n', '<Localleader>g')
+  keymap_set('n', '<Leader>g')
+  keymap_set({ 'n', 'x' }, '<Localleader>a')
+  keymap_set({ 'n', 'x' }, '<Localleader>f')
+  keymap_set('n', '<Localleader>d')
+  keymap_set('n', '<Localleader>vd')
+  keymap_set('n', '<Localleader>vr')
+  keymap_set('n', '<Localleader>vi')
+  keymap_set('n', '<Localleader>vt')
 end
 
 function M.setup_lsp_keymaps(bufnr)
-  local floating_window_border = require('meteor.plugins.lsp').floating_window_border
   local telescope_builtin = require('telescope.builtin')
 
   local function keymap_set(mode, lhs, rhs, opts)
@@ -97,9 +119,6 @@ function M.setup_lsp_keymaps(bufnr)
 
   keymap_set('n', 'K', vim.lsp.buf.hover, { desc = 'Show LSP hover info' })
   keymap_set('n', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Show signature help' })
-  keymap_set('n', '<Localleader>e', function()
-    vim.diagnostic.open_float({ border = floating_window_border })
-  end, { desc = 'Show error in current line' })
   keymap_set('n', '<Localleader>r', telescope_builtin.lsp_references, { desc = 'Show references' })
   keymap_set('n', '<Localleader>o', '<Cmd>SymbolsOutline<CR>', { desc = 'Show symbol outline' })
   keymap_set(
@@ -126,12 +145,6 @@ function M.setup_lsp_keymaps(bufnr)
     '<Cmd>TroubleToggle workspace_diagnostics<CR>',
     { desc = 'Toggle diagnostic across project' }
   )
-  keymap_set({ 'n', 'x', 'o' }, '[g', function()
-    vim.diagnostic.goto_prev({ float = { border = floating_window_border } })
-  end, { desc = 'Jump to previous diagnostic' })
-  keymap_set({ 'n', 'x', 'o' }, ']g', function()
-    vim.diagnostic.goto_next({ float = { border = floating_window_border } })
-  end, { desc = 'Jump to next diagnostic' })
   keymap_set(
     { 'n', 'x' },
     '<Localleader>a',

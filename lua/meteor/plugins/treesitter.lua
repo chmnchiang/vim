@@ -1,19 +1,42 @@
 local M = {}
 
+local treesitter_installed_parsers = {
+  'bibtex',
+  'c',
+  'comment',
+  'cpp',
+  'dart',
+  'java',
+  'javascript',
+  'json',
+  'latex',
+  'lua',
+  'python',
+  'rust',
+  'vim',
+}
+
+local treesitter_enabled_filetypes = {
+  'bibtex',
+  'c',
+  'comment',
+  'cpp',
+  'dart',
+  'java',
+  'javascript',
+  'javascript.jsx',
+  'javascriptreact',
+  'json',
+  'latex',
+  'lua',
+  'python',
+  'rust',
+  'vim',
+}
+
 local function treesitter_config()
   require('nvim-treesitter.configs').setup({
-    ensure_installed = {
-      'lua',
-      'rust',
-      'cpp',
-      'c',
-      'java',
-      'python',
-      'vim',
-      'comment',
-      'javascript',
-      'json',
-    },
+    ensure_installed = treesitter_installed_parsers,
     highlight = { enable = true, additional_vim_regex_highlighting = false },
     incremental_selection = {
       enable = true,
@@ -97,6 +120,26 @@ function M.setup(use)
     config = treesitter_playground_config,
     after = 'nvim-treesitter',
   })
+end
+
+function M.packages(opt)
+  return {
+    {
+      'nvim-treesitter/nvim-treesitter',
+      config = treesitter_config,
+      ft = treesitter_enabled_filetypes,
+    },
+    {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      config = treesitter_textobjects_config,
+      ft = treesitter_enabled_filetypes,
+    },
+    {
+      'nvim-treesitter/playground',
+      config = treesitter_playground_config,
+      ft = treesitter_enabled_filetypes,
+    },
+  }
 end
 
 return M

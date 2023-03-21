@@ -89,7 +89,18 @@ local function lsp_config()
   })
 
   setup_lsp('tsserver')
-  setup_lsp('pyright')
+  setup_lsp('pylsp', {
+    -- settings = {
+    --   pylsp = {
+    --     plugins = {
+    --       autopep8 = { enabled = false },
+    --       yapf = {
+    --         enabled = true,
+    --       },
+    --     },
+    --   },
+    -- },
+  })
   setup_lsp('texlab')
   setup_lsp('clangd')
   setup_lsp('dartls')
@@ -98,8 +109,7 @@ local function lsp_config()
   table.insert(runtime_path, 'lua/?.lua')
   table.insert(runtime_path, 'lua/?/init.lua')
 
-  setup_lsp('sumneko_lua', {
-    cmd = { 'lua-language-server' },
+  setup_lsp('lua_ls', {
     settings = {
       Lua = {
         runtime = { version = 'LuaJIT', path = runtime_path },
@@ -180,6 +190,40 @@ function M.setup(use)
     end,
     cmd = { 'SymbolsOutline' },
   })
+end
+
+function M.packages(opt)
+  return {
+    {
+      'neovim/nvim-lspconfig',
+      dependencies = { 'hrsh7th/cmp-nvim-lsp' },
+      config = lsp_config,
+      ft = M.lsp_enabled_filetypes,
+    },
+    {
+      'ray-x/lsp_signature.nvim',
+      dependencies = { 'nvim-lspconfig' },
+      config = {
+        handler_opts = {
+          border = require('meteor.plugins.lsp').floating_window_border,
+        },
+      },
+      ft = M.lsp_enabled_filetypes,
+    },
+    {
+      'simrat39/symbols-outline.nvim',
+      dependencies = { 'nvim-lspconfig' },
+      config = {
+        auto_preview = false,
+      },
+      cmd = { 'SymbolsOutline' },
+    },
+    {
+      'j-hui/fidget.nvim',
+      config = {},
+      lazy = false,
+    },
+  }
 end
 
 return M

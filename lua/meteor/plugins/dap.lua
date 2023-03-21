@@ -63,13 +63,13 @@ local function dap_ui_config()
   local dap = require('dap')
   dapui.setup({})
   dap.listeners.after.event_initialized['dapui_config'] = function()
-    dapui.open()
+    dapui.open({})
   end
   dap.listeners.before.event_terminated['dapui_config'] = function()
-    dapui.close()
+    dapui.close({})
   end
   dap.listeners.before.event_exited['dapui_config'] = function()
-    dapui.close()
+    dapui.close({})
   end
 end
 
@@ -99,6 +99,42 @@ function M.setup(use)
     config = dap_python_config,
   })
   use({ 'jbyuki/one-small-step-for-vimkind', ft = 'lua' })
+end
+
+function M.packages(opt)
+  return {
+    { 'mfussenegger/nvim-dap', config = dap_config },
+    {
+      'theHamsta/nvim-dap-virtual-text',
+      dependencies = { 'mfussenegger/nvim-dap' },
+      config = {},
+    },
+    {
+      'rcarriga/nvim-dap-ui',
+      dependencies = { 'mfussenegger/nvim-dap' },
+      config = dap_ui_config,
+      keys = function()
+        local dap = require('dap')
+        return {
+          { '<leader>dt', dap.toggle_breakpoint, desc = 'DAP toggle breakpoint' },
+          { '<leader>dc', dap.continue, desc = 'DAP continue' },
+          { '<leader>ds', dap.step_over, desc = 'DAP step over' },
+          { '<leader>di', dap.step_into, desc = 'DAP step into' },
+          { '<leader>do', dap.step_out, desc = 'DAP step out' },
+          { '<leader>du', dap.up, desc = 'DAP go up a frame' },
+          { '<leader>dd', dap.down, desc = 'DAP go down a frame' },
+          { '<leader>dC', dap.run_to_cursor, desc = 'DAP run to cursor position' },
+          { '<leader>de', require('dapui').eval, 'DAP eval expression under cursor' },
+        }
+      end,
+    },
+    {
+      'mfussenegger/nvim-dap-python',
+      ft = 'python',
+      config = dap_python_config,
+    },
+    { 'jbyuki/one-small-step-for-vimkind', ft = 'lua' },
+  }
 end
 
 return M

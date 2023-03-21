@@ -61,4 +61,39 @@ function M.setup(use)
   })
 end
 
+function M.packages(opt)
+  return {
+    {
+      'nvim-telescope/telescope.nvim',
+      dependencies = { 'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons' },
+      config = telescope_config,
+      cmd = 'Telescope',
+      keys = function()
+        local telescope_builtin = require('telescope.builtin')
+        return {
+          { '<leader>b', telescope_builtin.buffers, desc = 'Telescope search opened buffers' },
+          { '<leader>f', telescope_builtin.find_files, desc = 'Telescope search files under CWD' },
+          {
+            '<leader>ss',
+            telescope_builtin.live_grep,
+            desc = 'Telescope live search files under CWD with regex',
+          },
+          { '<leader>sr', telescope_builtin.resume, desc = 'Resume last Telescope session' },
+          { '<leader>sp', telescope_builtin.pickers, desc = 'Telescope search telescope pickers' },
+          { '<leader>sh', telescope_builtin.help_tags, desc = 'Telescope search help tags' },
+        }
+      end,
+    },
+    {
+      'nvim-telescope/telescope-ui-select.nvim',
+      lazy = false,
+    },
+    {
+      'folke/trouble.nvim',
+      config = trouble_config,
+      cmd = { 'Trouble', 'TroubleToggle' },
+    },
+  }
+end
+
 return M

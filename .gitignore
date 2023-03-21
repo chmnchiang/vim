@@ -1,4 +1,5 @@
 .init.vim
+.luarc.json
 plugged
 plugin
 lua/meteor/plugins/experiments.lua

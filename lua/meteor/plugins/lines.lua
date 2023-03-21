@@ -101,6 +101,34 @@ local function bufferline_config()
     },
     highlights = bufferline_highlights,
   })
+
+  vim.keymap.set('n', 'L', '<Cmd>BufferLineCycleNext<CR>', { desc = 'Go to previous buffer' })
+  vim.keymap.set(
+    'n',
+    '<leader>l',
+    '<Cmd>BufferLineCycleNext<CR>',
+    { desc = 'Go to previous buffer' }
+  )
+  vim.keymap.set('n', 'H', '<Cmd>BufferLineCyclePrev<CR>', { desc = 'Go to previous buffer' })
+  vim.keymap.set(
+    'n',
+    '<leader>h',
+    '<Cmd>BufferLineCyclePrev<CR>',
+    { desc = 'Go to previous buffer' }
+  )
+  vim.keymap.set(
+    'n',
+    '<leader>L',
+    '<Cmd>BufferLineMoveNext<CR>',
+    { desc = 'Move the current buffer right' }
+  )
+  vim.keymap.set(
+    'n',
+    '<leader>H',
+    '<Cmd>BufferLineMovePrev<CR>',
+    { desc = 'Move the current buffer left' }
+  )
+  vim.keymap.set('n', 'S', '<Cmd>BufferLinePick<CR>')
 end
 
 local function lualine_config()
@@ -163,7 +191,28 @@ function M.setup(use)
     after = { 'lualine-signify-diff' },
     config = lualine_config,
   })
-  use({ 'chmnchiang/lualine-signify-diff', requires = 'mhinz/vim-signify' })
+  use({ 'chmnchiang/lualine-signify-diff' })
+end
+
+function M.packages(use)
+  return {
+    {
+      'akinsho/bufferline.nvim',
+      dependencies = { 'kyazdani42/nvim-web-devicons' },
+      config = bufferline_config,
+      lazy = false,
+    },
+    {
+      'hoob3rt/lualine.nvim',
+      dependencies = { 'chmnchiang/lualine-signify-diff' },
+      config = lualine_config,
+      lazy = false,
+    },
+    {
+      'chmnchiang/lualine-signify-diff',
+      dependencies = { 'mhinz/vim-signify' },
+    },
+  }
 end
 
 return M

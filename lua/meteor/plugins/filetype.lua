@@ -16,4 +16,10 @@ function M.setup(use)
   use({ 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } })
 end
 
+function M.packages(use)
+  return {
+    { 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } },
+  }
+end
+
 return M
