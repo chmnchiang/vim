@@ -28,6 +28,7 @@ M.lsp_enabled_filetypes = {
   'rust',
   'lua',
   'dart',
+  'toml',
 }
 
 function M.lsp_on_attach(client, bufnr)
@@ -84,9 +85,10 @@ local function lsp_config()
     nvim_lsp[lsp_name].setup(options)
   end
 
-  setup_lsp('rust_analyzer', {
-    settings = { ['rust-analyzer'] = { checkOnSave = { command = 'clippy' } } },
-  })
+  -- setup_lsp('rust_analyzer', {
+  --   cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+  --   settings = { ['rust-analyzer'] = { checkOnSave = { command = 'clippy' } } },
+  -- })
 
   setup_lsp('tsserver')
   setup_lsp('pylsp', {
@@ -104,6 +106,7 @@ local function lsp_config()
   setup_lsp('texlab')
   setup_lsp('clangd')
   setup_lsp('dartls')
+  setup_lsp('taplo')
 
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, 'lua/?.lua')
@@ -162,36 +165,6 @@ local function lsp_config()
   define_diagnostic_symbol('Hint', icons.hint)
 end
 
-function M.setup(use)
-  use({
-    'neovim/nvim-lspconfig',
-    requires = { 'hrsh7th/cmp-nvim-lsp' },
-    config = lsp_config,
-    ft = M.lsp_enabled_filetypes,
-    module = 'lspconfig',
-  })
-  use({
-    'ray-x/lsp_signature.nvim',
-    config = function()
-      require('lsp_signature').setup({
-        handler_opts = {
-          border = require('meteor.plugins.lsp').floating_window_border,
-        },
-      })
-    end,
-    after = 'nvim-lspconfig',
-  })
-  use({
-    'simrat39/symbols-outline.nvim',
-    config = function()
-      require('symbols-outline').setup({
-        auto_preview = false,
-      })
-    end,
-    cmd = { 'SymbolsOutline' },
-  })
-end
-
 function M.packages(opt)
   return {
     {
@@ -222,6 +195,7 @@ function M.packages(opt)
       'j-hui/fidget.nvim',
       config = {},
       lazy = false,
+      tag = 'legacy',
     },
   }
 end

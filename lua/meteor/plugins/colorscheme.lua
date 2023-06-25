@@ -1,11 +1,5 @@
 local M = {}
 
-function M.setup(use)
-  use({ '~/.config/nvim/custom-plugins/vim-color-scheme-meteor' })
-  use({ 'rktjmp/shipwright.nvim', cmd = { 'Shipwright' } })
-  use({ 'rktjmp/lush.nvim', cmd = { 'Lushify' }, after = { 'shipwright.nvim' } })
-end
-
 function M.packages(opt)
   local packages = {
     {

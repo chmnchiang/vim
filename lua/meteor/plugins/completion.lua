@@ -35,13 +35,18 @@ local function nvim_cmp_setup()
         require('luasnip').lsp_expand(args.body)
       end,
     },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-d>'] = cmp.mapping.scroll_docs(4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm({ select = false }),
-    }),
+    mapping = (function()
+      local mapping = cmp.mapping.preset.insert({
+        ['<C-d>'] = cmp.mapping.scroll_docs(4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        ['<C-y>'] = nil,
+      })
+      mapping['<C-Y>'] = nil
+      return mapping
+    end)(),
     sources = {
       { name = 'nvim_lsp' },
       { name = 'path' },
@@ -58,21 +63,6 @@ local function nvim_cmp_setup()
     mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
   })
-end
-
-function M.setup(use)
-  use({
-    'hrsh7th/nvim-cmp',
-    requires = { 'onsails/lspkind-nvim' },
-    config = nvim_cmp_setup,
-    module = 'cmp',
-    event = { 'InsertEnter', 'CmdlineEnter' },
-  })
-  use({ 'hrsh7th/cmp-nvim-lsp', module = 'cmp_nvim_lsp' })
-  use({ 'hrsh7th/cmp-buffer', after = 'nvim-cmp' })
-  use({ 'hrsh7th/cmp-path', after = 'nvim-cmp' })
-  use({ 'hrsh7th/cmp-cmdline', after = 'nvim-cmp' })
-  use({ 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' })
 end
 
 function M.packages(opt)

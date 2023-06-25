@@ -8,15 +8,18 @@ local function rust_tools_config()
       },
       inlay_hints = { highlight = 'SpecialHint' },
     },
-    server = { on_attach = require('meteor.plugins.lsp').lsp_on_attach },
+    server = {
+      cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+      on_attach = require('meteor.plugins.lsp').lsp_on_attach,
+      settings = { ['rust-analyzer'] = {
+        checkOnSave = { command = 'clippy' },
+        procMacro = { enable = true },
+      } },
+    },
   })
 end
 
-function M.setup(use)
-  use({ 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } })
-end
-
-function M.packages(use)
+function M.packages()
   return {
     { 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } },
   }

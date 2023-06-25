@@ -18,7 +18,12 @@ local function load_lazy_nvim(opt)
   local function get_all_packages(modules)
     local packages = {}
     for _, module in ipairs(modules) do
-      vim.list_extend(packages, require(('meteor.plugins.%s'):format(module)).packages(opt))
+      local ok, err = pcall(function()
+        vim.list_extend(packages, require(('meteor.plugins.%s'):format(module)).packages(opt))
+      end)
+      if not ok then
+        log.error([[failed to load packages from meteor.plugins.%s: %s]], module, err)
+      end
     end
     return packages
   end
@@ -35,6 +40,7 @@ local function load_lazy_nvim(opt)
     'picker',
     'snippet',
     'treesitter',
+    'experiments',
   })
   require('lazy').setup(packages, {
     defaults = {
@@ -43,18 +49,10 @@ local function load_lazy_nvim(opt)
   })
 end
 
-local function setup_colorscheme()
-  vim.opt.termguicolors = true
-  if not pcall(vim.cmd, [[colorscheme meteor-nvim]]) then
-    log.error([[fail to set the colorscheme to meteor-nvim]])
-  end
-end
-
 local function setup_vim_settings()
   -- Set tab size = 2 and use spaces.
-  vim.opt.tabstop = 2
   vim.opt.shiftwidth = 2
-  vim.opt.softtabstop = 2
+  vim.opt.softtabstop = -1
   vim.opt.expandtab = true
 
   vim.opt.number = true
@@ -65,7 +63,7 @@ local function setup_vim_settings()
   vim.opt.whichwrap = 'b,s,<,>,[,]'
 
   vim.opt.timeoutlen = 300
-  vim.opt.ttimeoutlen = 20
+  vim.opt.ttimeoutlen = 50
   -- Keep four lines above and below the cursor
   vim.opt.scrolloff = 4
   vim.opt.startofline = false
@@ -90,6 +88,7 @@ local function setup_vim_settings()
   vim.opt.splitright = true
   -- Use a single status line
   vim.opt.laststatus = 3
+  vim.opt.exrc = true
   -- Restore the cursor to the line when reopen a file.
   vim.cmd(
     [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
@@ -107,29 +106,7 @@ function M.setup(opt)
   if opt == nil then
     opt = {}
   end
-  if opt.use_lazy_nvim then
-    load_lazy_nvim(opt)
-  else
-    -- Setup colorscheme first because a lot of config use it.
-    setup_colorscheme()
-    -- Setup plugins
-    require('packer').startup(function(use)
-      use('wbthomason/packer.nvim')
-      require('meteor.plugins.colorscheme').setup(use)
-      require('meteor.plugins.common').setup(use)
-      require('meteor.plugins.filetype').setup(use)
-      require('meteor.plugins.lsp').setup(use)
-      require('meteor.plugins.treesitter').setup(use)
-      require('meteor.plugins.lines').setup(use)
-      require('meteor.plugins.picker').setup(use)
-      require('meteor.plugins.snippet').setup(use)
-      require('meteor.plugins.tree').setup(use)
-      require('meteor.plugins.completion').setup(use)
-      require('meteor.plugins.diff').setup(use)
-      require('meteor.plugins.dap').setup(use)
-      require('meteor.plugins.experiments').setup(use)
-    end)
-  end
+  load_lazy_nvim(opt)
   require('meteor.mappings').setup(opt.mappings)
   setup_vim_settings()
 end

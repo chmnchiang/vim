@@ -103,25 +103,6 @@ local function treesitter_playground_config()
   })
 end
 
-function M.setup(use)
-  use({
-    'nvim-treesitter/nvim-treesitter',
-    config = treesitter_config,
-    event = 'BufRead',
-    module = 'nvim-treesitter',
-  })
-  use({
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    config = treesitter_textobjects_config,
-    after = 'nvim-treesitter',
-  })
-  use({
-    'nvim-treesitter/playground',
-    config = treesitter_playground_config,
-    after = 'nvim-treesitter',
-  })
-end
-
 function M.packages(opt)
   return {
     {
@@ -139,6 +120,11 @@ function M.packages(opt)
       config = treesitter_playground_config,
       ft = treesitter_enabled_filetypes,
     },
+    {
+      'nvim-treesitter/nvim-treesitter-context',
+      config = {},
+      ft = treesitter_enabled_filetypes,
+    }
   }
 end
 

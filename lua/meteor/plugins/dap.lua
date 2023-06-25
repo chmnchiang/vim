@@ -77,30 +77,6 @@ local function dap_python_config()
   require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
 end
 
-function M.setup(use)
-  use({ 'mfussenegger/nvim-dap', config = dap_config, module = 'dap' })
-  use({
-    'theHamsta/nvim-dap-virtual-text',
-    after = 'nvim-dap',
-    config = function()
-      require('nvim-dap-virtual-text').setup({})
-    end,
-  })
-  use({
-    'rcarriga/nvim-dap-ui',
-    requires = { 'mfussenegger/nvim-dap' },
-    config = dap_ui_config,
-    after = 'nvim-dap',
-    module = 'dapui',
-  })
-  use({
-    'mfussenegger/nvim-dap-python',
-    ft = 'python',
-    config = dap_python_config,
-  })
-  use({ 'jbyuki/one-small-step-for-vimkind', ft = 'lua' })
-end
-
 function M.packages(opt)
   return {
     { 'mfussenegger/nvim-dap', config = dap_config },

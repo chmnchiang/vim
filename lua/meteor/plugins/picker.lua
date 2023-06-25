@@ -13,7 +13,7 @@ local function telescope_config()
         },
       },
       layout_strategy = 'vertical',
-      layout_config = { vertical = { width = 0.8, height = { padding = 1 } } },
+      layout_config = { width = 0.8, height = { padding = 2 } },
       path_display = { 'truncate' },
     },
     pickers = { buffers = { sort_mru = true } },
@@ -41,23 +41,6 @@ local function trouble_config()
       information = icons.info,
       other = icons.question,
     },
-  })
-end
-
-function M.setup(use)
-  use({
-    'nvim-telescope/telescope.nvim',
-    requires = { 'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons' },
-    config = telescope_config,
-  })
-  use({
-    'nvim-telescope/telescope-ui-select.nvim',
-  })
-  use({
-    'folke/trouble.nvim',
-    config = trouble_config,
-    module = 'trouble',
-    cmd = { 'Trouble', 'TroubleToggle' },
   })
 end
 

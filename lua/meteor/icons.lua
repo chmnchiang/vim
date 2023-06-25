@@ -1,8 +1,8 @@
 local M = {
-  error = ' ',
+  error = '󰅙 ',
   warn = ' ',
   info = ' ',
-  hint = '',
+  hint = '',
   question = ' ',
 }
 
