@@ -122,7 +122,7 @@ function M.packages(opt)
     },
     {
       'nvim-treesitter/nvim-treesitter-context',
-      config = {},
+      opts = {},
       ft = treesitter_enabled_filetypes,
     }
   }

@@ -87,11 +87,11 @@ function M.packages(opt)
       'kylechui/nvim-surround',
       version = '*',
       event = 'BufEnter',
-      config = {},
+      opts = {},
     },
     {
       'numToStr/Comment.nvim',
-      config = {
+      opts = {
         mappings = {
           basic = false,
           extra = false,
@@ -103,7 +103,7 @@ function M.packages(opt)
     { 'wellle/targets.vim', event = 'BufEnter' },
     {
       'lukas-reineke/indent-blankline.nvim',
-      config = {
+      opts = {
         buftype_exclude = { 'terminal', 'nofile', 'quickfix', 'prompt', 'help' },
         char_highlight_list = {
           'IndentGuidesOdd',
@@ -124,7 +124,7 @@ function M.packages(opt)
     },
     {
       'phaazon/hop.nvim',
-      config = {
+      opts = {
         case_insensitive = false,
       },
       keys = {

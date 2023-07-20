@@ -83,7 +83,7 @@ function M.packages(opt)
     {
       'theHamsta/nvim-dap-virtual-text',
       dependencies = { 'mfussenegger/nvim-dap' },
-      config = {},
+      opts = {},
     },
     {
       'rcarriga/nvim-dap-ui',

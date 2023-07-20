@@ -176,7 +176,7 @@ function M.packages(opt)
     {
       'ray-x/lsp_signature.nvim',
       dependencies = { 'nvim-lspconfig' },
-      config = {
+      opts = {
         handler_opts = {
           border = require('meteor.plugins.lsp').floating_window_border,
         },
@@ -186,14 +186,14 @@ function M.packages(opt)
     {
       'simrat39/symbols-outline.nvim',
       dependencies = { 'nvim-lspconfig' },
-      config = {
+      opts = {
         auto_preview = false,
       },
       cmd = { 'SymbolsOutline' },
     },
     {
       'j-hui/fidget.nvim',
-      config = {},
+      opts = {},
       lazy = false,
       tag = 'legacy',
     },
