@@ -50,7 +50,7 @@ function M.sort_by_last_modify_func(b1, b2)
 end
 
 function M.sort_bufferlines()
-  bufferline.sort_buffers_by(M.sort_by_last_modify_func)
+  bufferline.sort_by(M.sort_by_last_modify_func)
 end
 
 return M
