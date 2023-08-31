@@ -52,18 +52,55 @@ function M.packages(opt)
       config = telescope_config,
       cmd = 'Telescope',
       keys = function()
-        local telescope_builtin = require('telescope.builtin')
+        local function with_builtin(f)
+          return function()
+            local telescope = require('telescope.builtin')
+            return f(telescope)
+          end
+        end
         return {
-          { '<leader>b', telescope_builtin.buffers, desc = 'Telescope search opened buffers' },
-          { '<leader>f', telescope_builtin.find_files, desc = 'Telescope search files under CWD' },
+          {
+            '<leader>b',
+            with_builtin(function(t)
+              t.buffers()
+            end),
+            desc = 'Telescope search opened buffers',
+          },
+          {
+            '<leader>f',
+            with_builtin(function(t)
+              t.find_files()
+            end),
+            desc = 'Telescope search files under CWD',
+          },
           {
             '<leader>ss',
-            telescope_builtin.live_grep,
+            with_builtin(function(t)
+              t.live_grep()
+            end),
             desc = 'Telescope live search files under CWD with regex',
           },
-          { '<leader>sr', telescope_builtin.resume, desc = 'Resume last Telescope session' },
-          { '<leader>sp', telescope_builtin.pickers, desc = 'Telescope search telescope pickers' },
-          { '<leader>sh', telescope_builtin.help_tags, desc = 'Telescope search help tags' },
+          {
+            '<leader>sr',
+            with_builtin(function(t)
+              t.resume()
+            end),
+            desc = 'Resume last Telescope session',
+          },
+          {
+            '<leader>sp',
+            with_builtin(function(t)
+              t.pickers()
+            end),
+            desc = 'Telescope search telescope pickers',
+          },
+          {
+            '<leader>sh',
+            with_builtin(function(t)
+              t.help_tags()
+            end),
+            desc = 'Telescope search help tags',
+          },
         }
       end,
     },

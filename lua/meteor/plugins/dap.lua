@@ -90,17 +90,76 @@ function M.packages(opt)
       dependencies = { 'mfussenegger/nvim-dap' },
       config = dap_ui_config,
       keys = function()
-        local dap = require('dap')
+        local function with_dap(f)
+          return function()
+            local dap = require('dap')
+            return f(dap)
+          end
+        end
         return {
-          { '<leader>dt', dap.toggle_breakpoint, desc = 'DAP toggle breakpoint' },
-          { '<leader>dc', dap.continue, desc = 'DAP continue' },
-          { '<leader>ds', dap.step_over, desc = 'DAP step over' },
-          { '<leader>di', dap.step_into, desc = 'DAP step into' },
-          { '<leader>do', dap.step_out, desc = 'DAP step out' },
-          { '<leader>du', dap.up, desc = 'DAP go up a frame' },
-          { '<leader>dd', dap.down, desc = 'DAP go down a frame' },
-          { '<leader>dC', dap.run_to_cursor, desc = 'DAP run to cursor position' },
-          { '<leader>de', require('dapui').eval, 'DAP eval expression under cursor' },
+          {
+            '<leader>dt',
+            with_dap(function(dap)
+              dap.toggle_breakpoint()
+            end),
+            desc = 'DAP toggle breakpoint',
+          },
+          {
+            '<leader>dc',
+            with_dap(function(dap)
+              dap.continue()
+            end),
+            desc = 'DAP continue',
+          },
+          {
+            '<leader>ds',
+            with_dap(function(dap)
+              dap.step_over()
+            end),
+            desc = 'DAP step over',
+          },
+          {
+            '<leader>di',
+            with_dap(function(dap)
+              dap.step_into()
+            end),
+            desc = 'DAP step into',
+          },
+          {
+            '<leader>do',
+            with_dap(function(dap)
+              dap.step_out()
+            end),
+            desc = 'DAP step out',
+          },
+          {
+            '<leader>du',
+            with_dap(function(dap)
+              dap.up()
+            end),
+            desc = 'DAP go up a frame',
+          },
+          {
+            '<leader>dd',
+            with_dap(function(dap)
+              dap.down()
+            end),
+            desc = 'DAP go down a frame',
+          },
+          {
+            '<leader>dC',
+            with_dap(function(dap)
+              dap.run_to_cursor()
+            end),
+            desc = 'DAP run to cursor position',
+          },
+          {
+            '<leader>de',
+            function()
+              require('dapui').eval()
+            end,
+            'DAP eval expression under cursor',
+          },
         }
       end,
     },
