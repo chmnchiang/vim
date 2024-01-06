@@ -46,6 +46,9 @@ local function load_lazy_nvim(opt)
     defaults = {
       lazy = true,
     },
+    dev = {
+      path = '~/.config/nvim/custom-plugins/',
+    },
   })
 end
 
@@ -79,6 +82,8 @@ local function setup_vim_settings()
 
   vim.opt.list = true
   vim.opt.listchars = 'tab:» ,extends:›,precedes:‹,nbsp:·,trail:·'
+  vim.opt.fillchars =
+    'eob: ,horiz:━,horizup:┻,horizdown:┳,vert:┃,vertleft:┫,vertright:┣,verthoriz:╋'
   vim.opt.showbreak = '↳'
 
   vim.opt.signcolumn = 'yes'
@@ -89,17 +94,35 @@ local function setup_vim_settings()
   -- Use a single status line
   vim.opt.laststatus = 3
   vim.opt.exrc = true
+
+  local meteor_augroup = vim.api.nvim_create_augroup('MeteorAugroup', {})
   -- Restore the cursor to the line when reopen a file.
-  vim.cmd(
-    [[autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
-  )
-  -- Open :help vertically
-  vim.cmd([[
-    augroup vimrc_help
-    autocmd!
-    autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
-    augroup END
-  ]])
+  vim.api.nvim_create_autocmd('BufReadPost', {
+    group = meteor_augroup,
+    callback = function()
+      vim.cmd(
+        [[if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif]]
+      )
+    end,
+  })
+  vim.api.nvim_create_autocmd('BufWinEnter', {
+    group = meteor_augroup,
+    callback = function()
+      if vim.api.nvim_buf_get_option(0, 'buftype') == 'help' then
+        vim.cmd([[wincmd L]])
+      end
+    end,
+  })
+  local homedir = vim.fn.expand('~')
+  vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost', 'FileReadPost' }, {
+    group = meteor_augroup,
+    pattern = { homedir .. '/Documents/*', homedir .. '/.config/nvim/*' },
+    callback = function(arg)
+      if arg.buf ~= nil then
+        vim.api.nvim_buf_set_option(arg.buf, 'undofile', true)
+      end
+    end,
+  })
 end
 
 function M.setup(opt)

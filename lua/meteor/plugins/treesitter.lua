@@ -13,6 +13,8 @@ local treesitter_installed_parsers = {
   'lua',
   'python',
   'rust',
+  'typescript',
+  'graphql',
   'vim',
 }
 
@@ -31,7 +33,10 @@ local treesitter_enabled_filetypes = {
   'lua',
   'python',
   'rust',
+  'typescript',
+  'graphql',
   'vim',
+  'svelte',
 }
 
 local function treesitter_config()
@@ -92,6 +97,9 @@ local function treesitter_textobjects_config()
         swap_previous = { ['<Localleader>sh'] = '@parameter.inner' },
       },
     },
+    indent = {
+      enable = true,
+    }
   })
 end
 

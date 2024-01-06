@@ -29,6 +29,8 @@ M.lsp_enabled_filetypes = {
   'lua',
   'dart',
   'toml',
+  'svelte',
+  'vue',
 }
 
 function M.lsp_on_attach(client, bufnr)
@@ -85,55 +87,15 @@ local function lsp_config()
     nvim_lsp[lsp_name].setup(options)
   end
 
-  -- setup_lsp('rust_analyzer', {
-  --   cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
-  --   settings = { ['rust-analyzer'] = { checkOnSave = { command = 'clippy' } } },
-  -- })
-
   setup_lsp('tsserver')
-  setup_lsp('pylsp', {
-    -- settings = {
-    --   pylsp = {
-    --     plugins = {
-    --       autopep8 = { enabled = false },
-    --       yapf = {
-    --         enabled = true,
-    --       },
-    --     },
-    --   },
-    -- },
-  })
+  setup_lsp('pylsp')
   setup_lsp('texlab')
   setup_lsp('clangd')
   setup_lsp('dartls')
   setup_lsp('taplo')
-
-  local runtime_path = vim.split(package.path, ';')
-  table.insert(runtime_path, 'lua/?.lua')
-  table.insert(runtime_path, 'lua/?/init.lua')
-
-  setup_lsp('lua_ls', {
-    settings = {
-      Lua = {
-        runtime = { version = 'LuaJIT', path = runtime_path },
-        diagnostics = { globals = { 'vim' } },
-        format = {
-          enable = true,
-          defaultConfig = {
-            max_line_length = 100,
-          },
-        },
-        workspace = { library = vim.api.nvim_get_runtime_file('', true) },
-        telemetry = { enable = false },
-      },
-    },
-    on_attach = function(client, bufnr)
-      client.server_capabilities.documentFormattingProvider = false
-      client.server_capabilities.documentRangeFormattingProvider = false
-      on_attach(client, bufnr)
-    end,
-  })
-
+  setup_lsp('svelte')
+  setup_lsp('vuels', { cmd = { 'vue-language-server', '--stdio' } })
+  setup_lsp('lua_ls')
   setup_lsp('efm', {
     init_options = { documentFormatting = true },
     on_attach = function() end,
@@ -169,7 +131,7 @@ function M.packages(opt)
   return {
     {
       'neovim/nvim-lspconfig',
-      dependencies = { 'hrsh7th/cmp-nvim-lsp' },
+      dependencies = { 'hrsh7th/cmp-nvim-lsp', 'folke/neodev.nvim' },
       config = lsp_config,
       ft = M.lsp_enabled_filetypes,
     },

@@ -36,7 +36,7 @@ function M.setup(opt)
   vim.keymap.set('n', '<C-Down>', '<C-w>-')
 
   vim.keymap.set('n', '<Leader>q', '<Cmd>qa<CR>')
-  vim.keymap.set('n', '<Localleader>q', '<Cmd>bdelete<CR>')
+  vim.keymap.set('n', '<Localleader>q', '<Cmd>Bdelete<CR>')
   vim.keymap.set('n', '<Leader><leader>', '<Cmd>b #<CR>', { desc = 'Switch to previous buffer' })
 
   local floating_window_border = require('meteor.plugins.lsp').floating_window_border
@@ -50,35 +50,6 @@ function M.setup(opt)
     vim.diagnostic.goto_next({ float = { border = floating_window_border } })
   end, { desc = 'Jump to next diagnostic' })
 
-  if not opt.use_lazy_nvim then
-    if opt.telescope then
-      vim.keymap.set('n', '<leader>b', '<Cmd>Telescope buffers<CR>')
-      vim.keymap.set('n', '<leader>s', '<Cmd>Telescope live_grep<CR>')
-      vim.keymap.set('n', '<leader>f', '<Cmd>Telescope find_files<CR>')
-      vim.keymap.set(
-        'n',
-        '<leader>r',
-        '<Cmd>Telescope resume<CR>',
-        { desc = 'Resume the last Telescope' }
-      )
-      vim.keymap.set('n', '<leader>c', '<Cmd>Telescope command_history<CR>')
-    end
-    if opt.nvim_tree then
-      vim.keymap.set('n', '<leader>t', '<Cmd>NvimTreeToggle<CR>')
-    end
-    if opt.dap then
-      vim.keymap.set('n', '<leader>dt', [[<Cmd>lua require('dap').toggle_breakpoint()<CR>]])
-      vim.keymap.set('n', '<leader>dc', [[<Cmd>lua require('dap').continue()<CR>]])
-      vim.keymap.set('n', '<leader>ds', [[<Cmd>lua require('dap').step_over()<CR>]])
-      vim.keymap.set('n', '<leader>di', [[<Cmd>lua require('dap').step_into()<CR>]])
-      vim.keymap.set('n', '<leader>do', [[<Cmd>lua require('dap').step_out()<CR>]])
-      vim.keymap.set('n', '<leader>du', [[<Cmd>lua require('dap').up()<CR>]])
-      vim.keymap.set('n', '<leader>dd', [[<Cmd>lua require('dap').down()<CR>]])
-      vim.keymap.set('n', '<leader>dC', [[<Cmd>lua require('dap').run_to_cursor()<CR>]])
-      vim.keymap.set('n', '<leader>de', [[<Cmd>lua require('dapui').eval()<CR>]])
-    end
-    vim.keymap.set({ 'n', 'x' }, 's', [[<Cmd>lua require'hop'.hint_char2()<Cr>]])
-  end
   M.setup_lsp_keymap_placeholders()
 end
 

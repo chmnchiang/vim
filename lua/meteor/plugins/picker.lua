@@ -103,9 +103,14 @@ function M.packages(opt)
           },
         }
       end,
+      lazy = false,
     },
     {
       'nvim-telescope/telescope-ui-select.nvim',
+      lazy = false,
+    },
+    {
+      'nvim-telescope/telescope-symbols.nvim',
       lazy = false,
     },
     {

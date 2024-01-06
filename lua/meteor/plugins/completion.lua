@@ -80,6 +80,17 @@ function M.packages(opt)
       config = nvim_cmp_setup,
       event = { 'InsertEnter', 'CmdlineEnter' },
     },
+    {
+      'Exafunction/codeium.vim',
+      config = function()
+        vim.g.codeium_enabled = false
+        vim.g.codium_disable_bindings = 1
+        vim.keymap.set('i', '<C-y>', function()
+          return vim.fn['codeium#Accept']()
+        end, { expr = true })
+      end,
+      lazy = false,
+    },
   }
 end
 

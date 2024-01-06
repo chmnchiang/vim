@@ -14,6 +14,9 @@ local function nvim_tree_config()
         info = icons.info,
       },
     },
+    view = {
+      side = 'right',
+    },
   })
 end
 
@@ -103,11 +106,16 @@ function M.packages(opt)
     { 'wellle/targets.vim', event = 'BufEnter' },
     {
       'lukas-reineke/indent-blankline.nvim',
+      main = 'ibl',
       opts = {
-        buftype_exclude = { 'terminal', 'nofile', 'quickfix', 'prompt', 'help' },
-        char_highlight_list = {
-          'IndentGuidesOdd',
-          'IndentGuidesEven',
+        exclude = {
+          buftypes = { 'terminal', 'nofile', 'quickfix', 'prompt' },
+        },
+        indent = {
+          highlight = {
+            'IndentGuidesOdd',
+            'IndentGuidesEven',
+          },
         },
       },
       event = 'BufEnter',
@@ -151,6 +159,22 @@ function M.packages(opt)
           desc = 'Toggle nvim-tree',
         },
       },
+    },
+    {
+      'mbbill/undotree',
+      config = function()
+        local target_path = vim.fn.expand('~/.local/state/nvim/undodir')
+        if not vim.fn.isdirectory(target_path) then
+          vim.fn.mkdir(target_path, 'p', tonumber('0700', 8))
+        end
+        vim.opt.undodir = target_path
+      end,
+      cmd = { 'UndotreeToggle' },
+      lazy = false,
+    },
+    {
+      'famiu/bufdelete.nvim',
+      lazy = false,
     },
   }
 end

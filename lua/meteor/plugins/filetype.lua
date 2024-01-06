@@ -11,10 +11,12 @@ local function rust_tools_config()
     server = {
       cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
       on_attach = require('meteor.plugins.lsp').lsp_on_attach,
-      settings = { ['rust-analyzer'] = {
-        checkOnSave = { command = 'clippy' },
-        procMacro = { enable = true },
-      } },
+      settings = {
+        ['rust-analyzer'] = {
+          checkOnSave = { command = 'clippy' },
+          procMacro = { enable = true },
+        },
+      },
     },
   })
 end
@@ -22,6 +24,16 @@ end
 function M.packages()
   return {
     { 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } },
+    {
+      'Julian/lean.nvim',
+      ft = { 'lean' },
+      opts = {
+        lsp = {
+          on_attach = require('meteor.plugins.lsp').lsp_on_attach,
+        },
+        mappings = true,
+      },
+    },
   }
 end
 
