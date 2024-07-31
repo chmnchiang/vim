@@ -1,9 +1,7 @@
-local M = {}
+local icons = require('meteor.icons')
+local get_highlight_color = require('meteor.utils').get_highlight_color
 
 local function bufferline_config()
-  local icons = require('meteor.icons')
-  local get_highlight_color = require('meteor.utils').get_highlight_color
-
   local bufferline_groups = {
     'buffer',
     'diagnostic',
@@ -131,73 +129,76 @@ local function bufferline_config()
   vim.keymap.set('n', 'S', '<Cmd>BufferLinePick<CR>')
 end
 
-local function lualine_config()
-  local icons = require('meteor.icons')
-  local get_highlight_color = require('meteor.utils').get_highlight_color
-
-  require('lualine').setup({
-    options = {
-      theme = 'onedark',
-      disabled_filetypes = {
-        'dapui_watches',
-        'dapui_stacks',
-        'dapui_breakpoints',
-        'dapui_scopes',
-      },
-    },
-    sections = {
-      lualine_a = { 'location', 'progress' },
-      lualine_b = { 'filetype' },
-      lualine_c = {
-        'filename',
-        {
-          'diagnostics',
-          sources = { 'nvim_diagnostic' },
-          diagnostics_color = {
-            error = { fg = get_highlight_color('DiagnosticSignError', 'fg') },
-            warn = { fg = get_highlight_color('DiagnosticSignWarn', 'fg') },
-            info = { fg = get_highlight_color('DiagnosticSignInfo', 'fg') },
-            hint = { fg = get_highlight_color('DiagnosticSignHint', 'fg') },
-          },
-          symbols = {
-            error = icons.error,
-            warn = icons.warn,
-            info = icons.info,
-            hint = icons.hint,
-          },
+return {
+  {
+    'akinsho/bufferline.nvim',
+    dependencies = { 'kyazdani42/nvim-web-devicons' },
+    config = bufferline_config,
+    lazy = false,
+  },
+  {
+    'hoob3rt/lualine.nvim',
+    dependencies = { 'chmnchiang/lualine-signify-diff' },
+    opts = function()
+      -- Make it a function so the diagnostic color is queried after our colorscheme loaded.
+      local trouble = require('trouble')
+      local symbols = trouble.statusline({
+        mode = 'lsp_document_symbols',
+        groups = {},
+        title = false,
+        filter = { range = true },
+        format = '{kind_icon}{symbol.name:Normal}',
+        hl_group = 'lualine_c_normal',
+      })
+      return {
+        options = {
+          theme = 'onedark',
+          globalstatus = true,
         },
-      },
-      lualine_x = {
-        require('meteor.utils').lsp_readiness,
-      },
-      lualine_y = {
-        { 'signify_diff', symbols = { added = '+', modified = '~', removed = '-' } },
-        'branch',
-      },
-      lualine_z = { 'mode' },
-    },
-  })
-end
-
-function M.packages()
-  return {
-    {
-      'akinsho/bufferline.nvim',
-      dependencies = { 'kyazdani42/nvim-web-devicons' },
-      config = bufferline_config,
-      lazy = false,
-    },
-    {
-      'hoob3rt/lualine.nvim',
-      dependencies = { 'chmnchiang/lualine-signify-diff' },
-      config = lualine_config,
-      lazy = false,
-    },
-    {
-      'chmnchiang/lualine-signify-diff',
-      dependencies = { 'mhinz/vim-signify' },
-    },
-  }
-end
-
-return M
+        sections = {
+          lualine_a = { 'location', 'progress' },
+          lualine_b = { 'filetype' },
+          lualine_c = {
+            'filename',
+            {
+              function()
+                local result = symbols.get()
+                return result:gsub("%%%*", "")
+              end,
+              cond = symbols.has,
+            },
+          },
+          lualine_x = {
+            {
+              'diagnostics',
+              sources = { 'nvim_diagnostic' },
+              diagnostics_color = {
+                error = { fg = get_highlight_color('DiagnosticSignError', 'fg') },
+                warn = { fg = get_highlight_color('DiagnosticSignWarn', 'fg') },
+                info = { fg = get_highlight_color('DiagnosticSignInfo', 'fg') },
+                hint = { fg = get_highlight_color('DiagnosticSignHint', 'fg') },
+              },
+              symbols = {
+                error = icons.error,
+                warn = icons.warn,
+                info = icons.info,
+                hint = icons.hint,
+              },
+            },
+            require('meteor.utils').lsp_readiness,
+          },
+          lualine_y = {
+            { 'signify_diff', symbols = { added = '+', modified = '~', removed = '-' } },
+            'branch',
+          },
+          lualine_z = { 'mode' },
+        },
+      }
+    end,
+    lazy = false,
+  },
+  {
+    'chmnchiang/lualine-signify-diff',
+    dependencies = { 'mhinz/vim-signify' },
+  },
+}

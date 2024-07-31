@@ -1,5 +1,3 @@
-local M = {}
-
 local function nvim_cmp_setup()
   local cmp = require('cmp')
   local utils = require('meteor.utils')
@@ -22,7 +20,7 @@ local function nvim_cmp_setup()
 
   local format = function(entry, vim_item)
     vim_item.abbr = utils.trim(vim_item.abbr, 80)
-    if has_lspkind then
+    if lspkind_format ~= nil then
       return lspkind_format(entry, vim_item)
     else
       return vim_item
@@ -65,33 +63,32 @@ local function nvim_cmp_setup()
   })
 end
 
-function M.packages(opt)
-  return {
-    {
-      'hrsh7th/nvim-cmp',
-      dependencies = {
-        'onsails/lspkind-nvim',
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
-        'hrsh7th/cmp-nvim-lsp',
-        'saadparwaiz1/cmp_luasnip',
-      },
-      config = nvim_cmp_setup,
-      event = { 'InsertEnter', 'CmdlineEnter' },
+return {
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'onsails/lspkind-nvim',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/cmp-nvim-lsp',
+      'saadparwaiz1/cmp_luasnip',
     },
-    {
-      'Exafunction/codeium.vim',
-      config = function()
-        vim.g.codeium_enabled = false
-        vim.g.codium_disable_bindings = 1
-        vim.keymap.set('i', '<C-y>', function()
-          return vim.fn['codeium#Accept']()
-        end, { expr = true })
-      end,
-      lazy = false,
-    },
-  }
-end
-
-return M
+    config = nvim_cmp_setup,
+    event = { 'InsertEnter', 'CmdlineEnter' },
+  },
+  {
+    'Exafunction/codeium.vim',
+    init = function()
+      vim.g.codeium_enabled = false
+      vim.g.codium_disable_bindings = 1
+    end,
+    config = function()
+      vim.keymap.set('i', '<C-y>', function()
+        return vim.fn['codeium#Accept']()
+      end, { expr = true })
+    end,
+    enabled = require('meteor').is_personal,
+    lazy = false,
+  },
+}

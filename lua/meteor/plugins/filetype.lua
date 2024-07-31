@@ -1,40 +1,53 @@
-local M = {}
+return {
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^4',
+    init = function()
+      vim.g.rustaceanvim = {
+        server = {
+          cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+          on_attach = function(client, bufnr)
+            require('meteor.lsp').lsp_on_attach(client, bufnr)
 
-local function rust_tools_config()
-  require('rust-tools').setup({
-    tools = {
-      hover_actions = {
-        border = require('meteor.plugins.lsp').floating_window_border,
-      },
-      inlay_hints = { highlight = 'SpecialHint' },
-    },
-    server = {
-      cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
-      on_attach = require('meteor.plugins.lsp').lsp_on_attach,
-      settings = {
-        ['rust-analyzer'] = {
-          checkOnSave = { command = 'clippy' },
-          procMacro = { enable = true },
+            local function keymap_set(mode, lhs, rhs, opts)
+              if opts == nil then
+                opts = {}
+              end
+              opts.buffer = bufnr
+              vim.keymap.set(mode, lhs, rhs, opts)
+            end
+
+            keymap_set('n', 'K', function()
+              vim.cmd.RustLsp({ 'hover', 'actions' })
+            end, { desc = 'Show LSP hover info' })
+            keymap_set('x', 'K', function()
+              vim.cmd.RustLsp({ 'hover', 'range' })
+            end, { desc = 'Show LSP hover info' })
+
+            vim.keymap.set('n', '<Localleader>e', function()
+              vim.cmd.RustLsp({ 'renderDiagnostic', 'current' })
+            end, { desc = 'Show error in current line' })
+          end,
+          settings = {
+            ['rust-analyzer'] = {
+              checkOnSave = { command = 'clippy' },
+              procMacro = { enable = true },
+            },
+          },
         },
+      }
+    end,
+    lazy = false,
+  },
+  {
+    'Julian/lean.nvim',
+    ft = { 'lean' },
+    opts = {
+      lsp = {
+        on_attach = require('meteor.lsp').lsp_on_attach,
       },
+      mappings = true,
     },
-  })
-end
-
-function M.packages()
-  return {
-    { 'simrat39/rust-tools.nvim', config = rust_tools_config, ft = { 'rust' } },
-    {
-      'Julian/lean.nvim',
-      ft = { 'lean' },
-      opts = {
-        lsp = {
-          on_attach = require('meteor.plugins.lsp').lsp_on_attach,
-        },
-        mappings = true,
-      },
-    },
-  }
-end
-
-return M
+    enabled = require('meteor').is_personal(),
+  },
+}

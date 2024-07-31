@@ -3,7 +3,7 @@ local log = require('meteor.log')
 
 local function load_lazy_nvim(opt)
   local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-  if not vim.loop.fs_stat(lazypath) then
+  if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
       'git',
       'clone',
@@ -15,44 +15,61 @@ local function load_lazy_nvim(opt)
   end
   vim.opt.rtp:prepend(lazypath)
 
-  local function get_all_packages(modules)
-    local packages = {}
-    for _, module in ipairs(modules) do
-      local ok, err = pcall(function()
-        vim.list_extend(packages, require(('meteor.plugins.%s'):format(module)).packages(opt))
-      end)
-      if not ok then
-        log.error([[failed to load packages from meteor.plugins.%s: %s]], module, err)
-      end
-    end
-    return packages
-  end
-
-  local packages = get_all_packages({
-    'colorscheme',
-    'common',
-    'completion',
-    'dap',
-    'diff',
-    'filetype',
-    'lines',
-    'lsp',
-    'picker',
-    'snippet',
-    'treesitter',
-    'experiments',
-  })
-  require('lazy').setup(packages, {
+  require('lazy').setup('meteor.plugins', {
     defaults = {
       lazy = true,
     },
-    dev = {
-      path = '~/.config/nvim/custom-plugins/',
-    },
+    dev = (function()
+      if M.opt.dev then
+        return {
+          path = '~/.config/nvim/custom-plugins/',
+        }
+      else
+        return nil
+      end
+    end)(),
   })
 end
 
-local function setup_vim_settings()
+local function meteor_init()
+  -- Map leaders. `mapleader` is used for global commands (switching buffers,
+  -- etc.), and `maplocalleader` is used for local commands (mainly for LSP
+  -- commands).
+  vim.g.mapleader = '\\'
+  vim.g.maplocalleader = ' '
+
+  local icons = require('meteor.icons')
+  vim.diagnostic.config({
+    signs = {
+      text = {
+         [vim.diagnostic.severity.ERROR] = icons.error,
+         [vim.diagnostic.severity.WARN] = icons.warn,
+         [vim.diagnostic.severity.INFO] = icons.info,
+         [vim.diagnostic.severity.HINT] = icons.hint,
+      },
+      numhl = {
+         [vim.diagnostic.severity.ERROR] = 'DiagnosticNumError',
+         [vim.diagnostic.severity.WARN] = 'DiagnosticNumWarn',
+         [vim.diagnostic.severity.INFO] = 'DiagnosticNumInfo',
+         [vim.diagnostic.severity.HINT] = 'DiagnosticNumHint',
+      }
+    }
+  })
+  local function define_diagnostic_sign(name, icon)
+    vim.fn.sign_define('DiagnosticSign' .. name, {
+      text = icon,
+      texthl = 'DiagnosticSign' .. name,
+      numhl = 'DiagnosticNum' .. name,
+    })
+  end
+
+  define_diagnostic_sign('Error', icons.error)
+  define_diagnostic_sign('Warn', icons.warn)
+  define_diagnostic_sign('Info', icons.info)
+  define_diagnostic_sign('Hint', icons.hint)
+end
+
+local function meteor_config()
   -- Set tab size = 2 and use spaces.
   vim.opt.shiftwidth = 2
   vim.opt.softtabstop = -1
@@ -95,6 +112,11 @@ local function setup_vim_settings()
   vim.opt.laststatus = 3
   vim.opt.exrc = true
 
+  -- See: https://github.com/neovim/neovim/pull/26034
+  vim.opt.fsync = false
+  -- This is the delay `CursorHold` autocommand will fire
+  vim.opt.updatetime = 2000
+
   local meteor_augroup = vim.api.nvim_create_augroup('MeteorAugroup', {})
   -- Restore the cursor to the line when reopen a file.
   vim.api.nvim_create_autocmd('BufReadPost', {
@@ -108,7 +130,7 @@ local function setup_vim_settings()
   vim.api.nvim_create_autocmd('BufWinEnter', {
     group = meteor_augroup,
     callback = function()
-      if vim.api.nvim_buf_get_option(0, 'buftype') == 'help' then
+      if vim.api.nvim_get_option_value('buftype', { buf = 0 }) == 'help' then
         vim.cmd([[wincmd L]])
       end
     end,
@@ -119,19 +141,41 @@ local function setup_vim_settings()
     pattern = { homedir .. '/Documents/*', homedir .. '/.config/nvim/*' },
     callback = function(arg)
       if arg.buf ~= nil then
-        vim.api.nvim_buf_set_option(arg.buf, 'undofile', true)
+        vim.api.nvim_set_option_value('undofile', true, { buf = arg.buf })
       end
     end,
   })
 end
 
+M.opt = {}
+
 function M.setup(opt)
-  if opt == nil then
-    opt = {}
+  if opt ~= nil then
+    M.opt = opt
   end
-  load_lazy_nvim(opt)
-  require('meteor.mappings').setup(opt.mappings)
-  setup_vim_settings()
+  meteor_init()
+  load_lazy_nvim(M.opt)
+  require('meteor.mappings').setup()
+  meteor_config()
 end
+
+function M.is_dev()
+  return M.opt.dev
+end
+
+function M.is_personal()
+  return M.opt.personal
+end
+
+M.floating_window_border = {
+  '🭽',
+  '▔',
+  '🭾',
+  '▕',
+  '🭿',
+  '▁',
+  '🭼',
+  '▏',
+}
 
 return M

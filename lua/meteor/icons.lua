@@ -2,7 +2,7 @@ local M = {
   error = '󰅙 ',
   warn = ' ',
   info = ' ',
-  hint = '',
+  hint = ' ',
   question = ' ',
 }
 

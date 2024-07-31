@@ -1,24 +1,4 @@
-local M = {}
-
-local function nvim_tree_config()
-  local icons = require('meteor.icons')
-
-  require('nvim-tree').setup({
-    respect_buf_cwd = false,
-    diagnostics = {
-      enable = true,
-      icons = {
-        error = icons.error,
-        warning = icons.warn,
-        hint = icons.hint,
-        info = icons.info,
-      },
-    },
-    view = {
-      side = 'right',
-    },
-  })
-end
+local icons = require('meteor.icons')
 
 local function comment_nvim_keys()
   return {
@@ -68,115 +48,136 @@ local function comment_nvim_keys()
   }
 end
 
-function M.packages(opt)
-  return {
-    {
-      'folke/which-key.nvim',
-      config = function()
-        local which_key = require('which-key')
-        which_key.setup({})
-        which_key.register({
-          c = {
-            name = '+Comment actions',
-          },
-          v = {
-            name = '+LSP extra actions',
-          },
-        }, { prefix = '<Localleader>' })
-      end,
-      lazy = false,
-    },
-    {
-      'kylechui/nvim-surround',
-      version = '*',
-      event = 'BufEnter',
-      opts = {},
-    },
-    {
-      'numToStr/Comment.nvim',
-      opts = {
-        mappings = {
-          basic = false,
-          extra = false,
+return {
+  {
+    'folke/which-key.nvim',
+    lazy = false,
+    config = function()
+      local which_key = require('which-key')
+      which_key.setup({
+        spec = {
+          { '<Localleader>c', group = 'Comment actions' },
+          { '<Localleader>v', group = 'LSP extra actions' },
+          { '<Localleader>s', group = 'Swap actions' },
+          { '<Leader>d', group = 'DAP' },
+          { '<Leader>s', group = 'Telescope' },
         },
+      })
+    end,
+    keys = {
+      {
+        '<leader>?',
+        function()
+          require('which-key').show()
+        end,
+        desc = 'Show all keymaps',
       },
-      keys = comment_nvim_keys(),
     },
-    { 'ntpeters/vim-better-whitespace', event = 'BufEnter' },
-    { 'wellle/targets.vim', event = 'BufEnter' },
-    {
-      'lukas-reineke/indent-blankline.nvim',
-      main = 'ibl',
-      opts = {
-        exclude = {
-          buftypes = { 'terminal', 'nofile', 'quickfix', 'prompt' },
-        },
-        indent = {
-          highlight = {
-            'IndentGuidesOdd',
-            'IndentGuidesEven',
-          },
-        },
+  },
+  {
+    'kylechui/nvim-surround',
+    version = '*',
+    event = 'BufEnter',
+    opts = {},
+  },
+  {
+    'numToStr/Comment.nvim',
+    opts = {
+      mappings = {
+        basic = false,
+        extra = false,
       },
-      event = 'BufEnter',
     },
-    {
-      'ojroques/vim-oscyank',
-      config = function()
-        -- Use OSC52 when + register is used
-        vim.cmd(
-          [[autocmd TextYankPost * if (v:event.operator is 'y' || v:event.operator is 'd') && v:event.regname is '+' | execute 'OSCYankRegister +' | endif]]
-        )
-      end,
-      event = 'BufEnter',
-    },
-    {
-      'phaazon/hop.nvim',
-      opts = {
-        case_insensitive = false,
+    keys = comment_nvim_keys(),
+  },
+  { 'ntpeters/vim-better-whitespace', event = 'BufEnter' },
+  { 'wellle/targets.vim', event = 'BufEnter' },
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {
+      exclude = {
+        buftypes = { 'terminal', 'nofile', 'quickfix', 'prompt' },
       },
-      keys = {
-        {
-          's',
-          function()
-            require('hop').hint_char2()
-          end,
-          desc = 'Invoke hop',
-        },
-      },
-      lazy = false,
-    },
-    {
-      'kyazdani42/nvim-tree.lua',
-      config = nvim_tree_config,
-      cmd = { 'NvimTreeOpen', 'NvimTreeToggle' },
-      keys = {
-        {
-          '<Leader>t',
-          function()
-            require('nvim-tree.api').tree.toggle()
-          end,
-          desc = 'Toggle nvim-tree',
+      indent = {
+        highlight = {
+          'IndentGuidesOdd',
+          'IndentGuidesEven',
         },
       },
     },
-    {
-      'mbbill/undotree',
-      config = function()
-        local target_path = vim.fn.expand('~/.local/state/nvim/undodir')
-        if not vim.fn.isdirectory(target_path) then
-          vim.fn.mkdir(target_path, 'p', tonumber('0700', 8))
-        end
-        vim.opt.undodir = target_path
-      end,
-      cmd = { 'UndotreeToggle' },
-      lazy = false,
+    event = 'BufEnter',
+  },
+  {
+    'ojroques/vim-oscyank',
+    config = function()
+      -- Use OSC52 when + register is used
+      vim.cmd(
+        [[autocmd TextYankPost * if (v:event.operator is 'y' || v:event.operator is 'd') && v:event.regname is '+' | execute 'OSCYankRegister +' | endif]]
+      )
+    end,
+    event = 'BufEnter',
+  },
+  {
+    'phaazon/hop.nvim',
+    opts = {
+      case_insensitive = false,
     },
-    {
-      'famiu/bufdelete.nvim',
-      lazy = false,
+    keys = {
+      {
+        's',
+        function()
+          require('hop').hint_char2()
+        end,
+        desc = 'Invoke hop',
+      },
     },
-  }
-end
-
-return M
+    lazy = false,
+  },
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'MunifTanjim/nui.nvim',
+    },
+    opts = {
+      close_if_last_window = true,
+      window = {
+        position = 'right',
+      },
+    },
+    cmd = { 'Neotree' },
+    keys = {
+      {
+        '<Leader>t',
+        function()
+          require('neo-tree.command').execute({
+            action = 'focus',
+            toggle = true,
+            position = 'right',
+          })
+        end,
+        desc = 'Toggle nvim-tree',
+      },
+    },
+  },
+  {
+    'mbbill/undotree',
+    enable = require('meteor').is_personal(),
+    config = function()
+      local target_path = vim.fn.expand('~/.local/state/nvim/undodir')
+      if not vim.fn.isdirectory(target_path) then
+        vim.fn.mkdir(target_path, 'p', tonumber('0700', 8))
+      end
+      -- vim.opt.undodir = target_path
+    end,
+    cmd = { 'UndotreeToggle' },
+    lazy = false,
+  },
+  {
+    'famiu/bufdelete.nvim',
+    lazy = false,
+  },
+}
