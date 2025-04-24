@@ -10,6 +10,12 @@ local function lsp_config()
       underline = false,
       severity_sort = true,
     })
+  vim.lsp.handlers['textDocument/diagnostic'] = vim.lsp.with(vim.lsp.diagnostic.on_diagnostic, {
+    virtual_text = false,
+    signs = { priority = 20 },
+    underline = false,
+    severity_sort = true,
+  })
 
   vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
     border = floating_window_border,
@@ -32,8 +38,9 @@ local function lsp_config()
     nvim_lsp[lsp_name].setup(options)
   end
 
-  setup_lsp('tsserver')
+  setup_lsp('ts_ls')
   setup_lsp('graphql')
+  setup_lsp('eslint')
   setup_lsp('pyright')
   setup_lsp('texlab')
   setup_lsp('clangd')
@@ -76,12 +83,17 @@ local function lsp_config()
       },
     },
   })
+  setup_lsp('tailwindcss')
 end
 
 return {
   {
     'neovim/nvim-lspconfig',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'folke/neodev.nvim', 'creativenull/efmls-configs-nvim' },
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'folke/neodev.nvim',
+      'creativenull/efmls-configs-nvim',
+    },
     config = lsp_config,
     event = { 'BufReadPost', 'BufNewFile' },
   },

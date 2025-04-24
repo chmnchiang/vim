@@ -75,7 +75,9 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
-    opts = {},
+    opts = {
+      multiline_threshold = 8,
+    },
     event = 'VeryLazy',
   },
 }

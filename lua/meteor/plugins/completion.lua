@@ -78,7 +78,7 @@ return {
     event = { 'InsertEnter', 'CmdlineEnter' },
   },
   {
-    'Exafunction/codeium.vim',
+    'Exafunction/windsurf.vim',
     init = function()
       vim.g.codeium_enabled = false
       vim.g.codium_disable_bindings = 1
