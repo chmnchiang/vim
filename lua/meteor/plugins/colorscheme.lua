@@ -8,6 +8,6 @@ return {
       vim.cmd([[colorscheme meteor-nvim]])
     end,
   },
-  { 'rktjmp/shipwright.nvim', enabled = require('meteor').is_dev, cmd = { 'Shipwright' } },
-  { 'rktjmp/lush.nvim', enabled = require('meteor').is_dev, cmd = { 'Lushify' } },
+  { 'rktjmp/shipwright.nvim', enabled = require('meteor.settings').is_dev, cmd = { 'Shipwright' } },
+  { 'rktjmp/lush.nvim', enabled = require('meteor.settings').is_dev, cmd = { 'Lushify' } },
 }

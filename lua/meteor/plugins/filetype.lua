@@ -48,6 +48,6 @@ return {
       },
       mappings = true,
     },
-    enabled = require('meteor').is_personal(),
+    enabled = require('meteor.settings').is_personal(),
   },
 }

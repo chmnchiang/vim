@@ -88,7 +88,7 @@ return {
         return vim.fn['codeium#Accept']()
       end, { expr = true })
     end,
-    enabled = require('meteor').is_personal,
+    enabled = require('meteor.settings').is_personal,
     lazy = false,
   },
 }

@@ -30,18 +30,28 @@ function M.setup()
   vim.keymap.set('n', '<Localleader>q', '<Cmd>Bdelete<CR>')
   vim.keymap.set('n', '<Leader><leader>', '<Cmd>b #<CR>', { desc = 'Switch to previous buffer' })
 
-  local floating_window_border = require('meteor').floating_window_border
+  local floating_window_border = require('meteor.settings').floating_window_border
   vim.keymap.set('n', '<Localleader>e', function()
     vim.diagnostic.open_float({ border = floating_window_border })
   end, { desc = 'Show error in current line' })
   vim.keymap.set({ 'n', 'x', 'o' }, '[g', function()
-    vim.diagnostic.goto_prev({ float = { border = floating_window_border } })
+    vim.diagnostic.jump({
+      count = -1,
+      on_jump = function()
+        vim.diagnostic.open_float({ border = floating_window_border })
+      end,
+    })
   end, { desc = 'Jump to previous diagnostic' })
   vim.keymap.set({ 'n', 'x', 'o' }, ']g', function()
-    vim.diagnostic.goto_next({ float = { border = floating_window_border } })
+    vim.diagnostic.jump({
+      count = 1,
+      on_jump = function()
+        vim.diagnostic.open_float({ border = floating_window_border })
+      end,
+    })
   end, { desc = 'Jump to next diagnostic' })
-
-  M.setup_lsp_keymap_placeholders()
+  --
+  -- M.setup_lsp_keymap_placeholders()
 end
 
 function M.setup_lsp_keymap_placeholders()
@@ -50,39 +60,74 @@ function M.setup_lsp_keymap_placeholders()
       vim.notify('LSP is not running in this buffer', vim.log.levels.INFO, {})
     end, {})
   end
-  keymap_set('n', 'K')
-  keymap_set('n', '<C-k>')
-  keymap_set('n', '<Localleader>e')
-  keymap_set('n', '<Localleader>r')
   keymap_set('n', '<Localleader>o')
   keymap_set('n', '<Localleader>O')
   keymap_set('n', '<Leader>O')
   keymap_set('n', '<Localleader>g')
   keymap_set('n', '<Leader>g')
-  keymap_set({ 'n', 'x' }, '<Localleader>a')
   keymap_set({ 'n', 'x' }, '<Localleader>f')
   keymap_set('n', '<Localleader>d')
-  keymap_set('n', '<Localleader>vd')
-  keymap_set('n', '<Localleader>vr')
-  keymap_set('n', '<Localleader>vi')
-  keymap_set('n', '<Localleader>vt')
+end
+
+function M.setup_treesitter_keymaps()
+  local select = require('nvim-treesitter-textobjects.select')
+  local move = require('nvim-treesitter-textobjects.move')
+
+  -- Select
+  local select_maps = {
+    ['ia'] = '@parameter.inner',
+    ['aa'] = '@parameter.outer',
+    ['af'] = '@function.outer',
+    ['if'] = '@function.inner',
+    ['ic'] = '@comment.outer',
+    ['ac'] = '@comment.outer',
+    ['is'] = '@statement.outer',
+    ['as'] = '@statement.outer',
+  }
+  for key, capture in pairs(select_maps) do
+    vim.keymap.set({ 'x', 'o' }, key, function()
+      select.select_textobject(capture, 'textobjects')
+    end, { desc = 'Treesitter: ' .. capture })
+  end
+
+  -- Move
+  vim.keymap.set({ 'n', 'x', 'o' }, ']f', function()
+    move.goto_next_start('@function.outer', 'textobjects')
+  end, { desc = 'Next function start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']a', function()
+    move.goto_next_start('@parameter.inner', 'textobjects')
+  end, { desc = 'Next parameter' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']F', function()
+    move.goto_next_end('@function.outer', 'textobjects')
+  end, { desc = 'Next function end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[f', function()
+    move.goto_previous_start('@function.outer', 'textobjects')
+  end, { desc = 'Previous function start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[a', function()
+    move.goto_previous_start('@parameter.inner', 'textobjects')
+  end, { desc = 'Previous parameter' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[F', function()
+    move.goto_previous_end('@function.outer', 'textobjects')
+  end, { desc = 'Previous function end' })
 end
 
 function M.setup_lsp_keymaps(bufnr)
   local telescope_builtin = require('telescope.builtin')
+  local floating_window_border = require('meteor.settings').floating_window_border
 
   local function keymap_set(mode, lhs, rhs, opts)
     if opts == nil then
       opts = {}
     end
+
     opts.buffer = bufnr
     vim.keymap.set(mode, lhs, rhs, opts)
   end
 
-  keymap_set('n', 'K', vim.lsp.buf.hover, { desc = 'Show LSP hover info' })
-  keymap_set('n', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Show signature help' })
-  keymap_set('n', '<Localleader>r', telescope_builtin.lsp_references, { desc = 'Show references' })
-
+  keymap_set('n', 'K', function()
+    vim.lsp.buf.hover({ border = floating_window_border })
+  end, { desc = 'vim.lsp.buf.hover()' })
+  keymap_set('n', 'grr', telescope_builtin.lsp_references, { desc = 'Show LSP references' })
   keymap_set(
     'n',
     '<Localleader>o',
@@ -107,41 +152,29 @@ function M.setup_lsp_keymaps(bufnr)
       filter = { buf = 0 },
     })
   end, { desc = 'Toggle diagnostics in current file' })
-  keymap_set('n', '<Leader>g', function()
-    require('trouble').toggle({
-      mode = 'diagnostics',
-    })
-  end, { desc = 'Toggle diagnostic across project' })
   keymap_set(
-    { 'n', 'x' },
-    '<Localleader>a',
-    vim.lsp.buf.code_action,
-    { desc = 'Show code actions' }
+    'n', '<Leader>g',
+    function()
+      require('trouble').toggle({
+        mode = 'diagnostics',
+      })
+    end,
+    { desc = 'Toggle diagnostic across project' }
   )
-  keymap_set({ 'n', 'x' }, '<Localleader>f', function()
-    vim.lsp.buf.format({ async = true })
-  end, { desc = 'Format current file' })
+  keymap_set(
+    { 'n', 'x' }, '<Localleader>f',
+    function()
+      vim.lsp.buf.format({ async = false })
+    end,
+    { desc = 'Format current file' }
+  )
   keymap_set(
     'n',
     '<Localleader>d',
     telescope_builtin.lsp_definitions,
     { desc = 'Show definitions' }
   )
-
-  keymap_set('n', '<Localleader>vd', vim.lsp.buf.declaration, { desc = 'Show Declaration' })
-  keymap_set('n', '<Localleader>vr', vim.lsp.buf.rename, { desc = 'Rename variable' })
-  keymap_set(
-    'n',
-    '<Localleader>vi',
-    telescope_builtin.lsp_implementations,
-    { desc = 'Show implementations' }
-  )
-  keymap_set(
-    'n',
-    '<Localleader>vt',
-    telescope_builtin.lsp_type_definitions,
-    { desc = 'Show type definition' }
-  )
+  keymap_set('n', 'grd', vim.lsp.buf.declaration, { desc = 'vim.lsp.buf.declaration()' })
 end
 
 return M

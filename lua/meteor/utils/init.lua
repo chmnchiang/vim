@@ -2,14 +2,14 @@ local M = {}
 
 function M.get_highlight_color(name, typ)
   if typ == 'fg' then
-    return string.format('#%06x', vim.api.nvim_get_hl_by_name(name, true).foreground)
+    return string.format('#%06x', vim.api.nvim_get_hl(0, { name = name, link = false }).fg)
   elseif typ == 'bg' then
-    return string.format('#%06x', vim.api.nvim_get_hl_by_name(name, true).background)
+    return string.format('#%06x', vim.api.nvim_get_hl(0, { name = name, link = false }).bg)
   end
 end
 
 function M.lsp_readiness()
-  if #vim.lsp.buf_get_clients(0) == 0 then
+  if #vim.lsp.get_clients({ bufnr = 0 }) == 0 then
     return ' '
   end
   return 'LSP  '

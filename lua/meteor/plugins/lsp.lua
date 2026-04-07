@@ -1,89 +1,60 @@
-local floating_window_border = require('meteor').floating_window_border
+local floating_window_border = require('meteor.settings').floating_window_border
 
 local function lsp_config()
-  local nvim_lsp = require('lspconfig')
-
-  vim.lsp.handlers['textDocument/publishDiagnostics'] =
-    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-      virtual_text = false,
-      signs = { priority = 20 },
-      underline = false,
-      severity_sort = true,
-    })
-  vim.lsp.handlers['textDocument/diagnostic'] = vim.lsp.with(vim.lsp.diagnostic.on_diagnostic, {
-    virtual_text = false,
-    signs = { priority = 20 },
-    underline = false,
-    severity_sort = true,
-  })
-
-  vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = floating_window_border,
-  })
-  vim.lsp.handlers['textDocument/signatureHelp'] =
-    vim.lsp.with(vim.lsp.handlers.signature_help, { border = floating_window_border })
-
-  local capabilities =
-    require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   local on_attach = require('meteor.lsp').lsp_on_attach
 
+  vim.lsp.config('*', {
+    capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    on_attach = on_attach,
+  })
+
   local function setup_lsp(lsp_name, options)
-    if options == nil then
-      options = {}
+    if options ~= nil then
+      vim.lsp.config(lsp_name, options)
     end
-    options = vim.tbl_extend('keep', options, {
-      on_attach = on_attach,
-      capabilities = capabilities,
-    })
-    nvim_lsp[lsp_name].setup(options)
+    vim.lsp.enable(lsp_name)
   end
 
-  setup_lsp('ts_ls')
-  setup_lsp('graphql')
-  setup_lsp('eslint')
-  setup_lsp('pyright')
-  setup_lsp('texlab')
-  setup_lsp('clangd')
-  setup_lsp('dartls')
-  setup_lsp('taplo')
-  setup_lsp('svelte')
-  setup_lsp('vuels', { cmd = { 'vue-language-server', '--stdio' } })
-  setup_lsp('lua_ls')
-  setup_lsp('efm', {
-    init_options = { documentFormatting = true },
-    filetypes = {
-      'lua',
-      'python',
-      'javascript',
-      'typescript',
-      'javascriptreact',
-      'typescriptreact',
-    },
-    settings = {
-      rootMarkers = { '.git/' },
-      languages = {
-        lua = {
-          {
-            formatCommand = 'stylua -',
-            formatStdin = true,
-          },
-        },
-        python = {
-          {
-            formatCommand = 'black --quiet -',
-            formatStdin = true,
-          },
-        },
-        typescript = {
-          require('efmls-configs.formatters.prettier'),
-        },
-        typescriptreact = {
-          require('efmls-configs.formatters.prettier'),
-        },
-      },
-    },
+  -- JavaScript / TypeScript
+  setup_lsp('ts_ls', {
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
+    end,
   })
-  setup_lsp('tailwindcss')
+  setup_lsp('oxlint')
+  setup_lsp('oxfmt')
+  setup_lsp('graphql')
+  setup_lsp('svelte')
+
+  -- Python
+  setup_lsp('pyright')
+  setup_lsp('ruff', {
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+      client.server_capabilities.hoverProvider = false
+    end,
+  })
+
+  -- Lua
+  setup_lsp('lua_ls')
+
+  -- C / C++
+  setup_lsp('clangd')
+
+  -- Dart
+  setup_lsp('dartls')
+
+  -- YAML
+  setup_lsp('yamlls')
+
+  -- Terraform / OpenTofu
+  setup_lsp('tofu_ls', {
+    cmd = { 'tofu-ls', 'serve' },
+    filetypes = { 'terraform', 'terraform-vars' },
+    root_markers = { '.terraform', '.git' },
+  })
 end
 
 return {
@@ -91,11 +62,10 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
-      'folke/neodev.nvim',
       'creativenull/efmls-configs-nvim',
     },
     config = lsp_config,
-    event = { 'BufReadPost', 'BufNewFile' },
+    lazy = false,
   },
   {
     'ray-x/lsp_signature.nvim',
@@ -115,7 +85,12 @@ return {
   {
     'j-hui/fidget.nvim',
     opts = {},
-    lazy = { 'BufReadPost', 'BufNewFile' },
+    event = { 'BufReadPost', 'BufNewFile' },
     tag = 'v1.0.0',
   },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {},
+  }
 }

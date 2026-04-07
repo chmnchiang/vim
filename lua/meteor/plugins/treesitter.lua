@@ -3,73 +3,26 @@ local function treesitter_textobjects_config() end
 return {
   {
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
     build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter.configs').setup({
-        ensure_installed = require('meteor').opt.treesitter.installed_parsers,
-        highlight = { enable = true, additional_vim_regex_highlighting = false },
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            init_selection = '<CR>',
-            scope_incremental = '<Tab>',
-            node_incremental = '<CR>',
-            node_decremental = '<S-CR>',
-          },
-        },
-      })
+      require('nvim-treesitter').install(require('meteor.settings').get_opt().treesitter.installed_parsers)
     end,
-    event = { 'VeryLazy' },
-    cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
-    playground = { enable = true },
+    lazy = false,
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
     config = function()
-      require('nvim-treesitter.configs').setup({
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ['ia'] = '@parameter.inner',
-              ['aa'] = '@parameter.outer',
-              ['af'] = '@function.outer',
-              ['if'] = '@function.inner',
-              ['ic'] = '@comment.outer',
-              ['ac'] = '@comment.outer',
-              ['is'] = '@statement.outer',
-              ['as'] = '@statement.outer',
-            },
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              [']f'] = '@function.outer',
-              [']a'] = '@parameter.inner',
-            },
-            goto_next_end = {
-              [']F'] = '@function.outer',
-            },
-            goto_previous_start = {
-              ['[f'] = '@function.outer',
-              ['[a'] = '@parameter.inner',
-            },
-            goto_previous_end = {
-              ['[F'] = '@function.outer',
-            },
-          },
-          swap = {
-            enable = true,
-            swap_next = { ['<Localleader>sl'] = '@parameter.inner' },
-            swap_previous = { ['<Localleader>sh'] = '@parameter.inner' },
-          },
+      require('nvim-treesitter-textobjects').setup({
+        select = {
+          lookahead = true,
         },
-        indent = {
-          enable = false,
+        move = {
+          set_jumps = true,
         },
       })
+      require('meteor.mappings').setup_treesitter_keymaps()
     end,
     event = 'VeryLazy',
   },

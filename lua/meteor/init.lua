@@ -1,5 +1,14 @@
 local M = {}
 local log = require('meteor.log')
+local settings = require('meteor.settings')
+
+local function meteor_init()
+  -- Map leaders. `mapleader` is used for global commands (switching buffers,
+  -- etc.), and `maplocalleader` is used for local commands (mainly for LSP
+  -- commands).
+  vim.g.mapleader = '\\'
+  vim.g.maplocalleader = ' '
+end
 
 local function load_lazy_nvim(opt)
   local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
@@ -20,7 +29,7 @@ local function load_lazy_nvim(opt)
       lazy = true,
     },
     dev = (function()
-      if M.opt.dev then
+      if opt.dev then
         return {
           path = '~/.config/nvim/custom-plugins/',
         }
@@ -29,44 +38,6 @@ local function load_lazy_nvim(opt)
       end
     end)(),
   })
-end
-
-local function meteor_init()
-  -- Map leaders. `mapleader` is used for global commands (switching buffers,
-  -- etc.), and `maplocalleader` is used for local commands (mainly for LSP
-  -- commands).
-  vim.g.mapleader = '\\'
-  vim.g.maplocalleader = ' '
-
-  local icons = require('meteor.icons')
-  vim.diagnostic.config({
-    signs = {
-      text = {
-         [vim.diagnostic.severity.ERROR] = icons.error,
-         [vim.diagnostic.severity.WARN] = icons.warn,
-         [vim.diagnostic.severity.INFO] = icons.info,
-         [vim.diagnostic.severity.HINT] = icons.hint,
-      },
-      numhl = {
-         [vim.diagnostic.severity.ERROR] = 'DiagnosticNumError',
-         [vim.diagnostic.severity.WARN] = 'DiagnosticNumWarn',
-         [vim.diagnostic.severity.INFO] = 'DiagnosticNumInfo',
-         [vim.diagnostic.severity.HINT] = 'DiagnosticNumHint',
-      }
-    }
-  })
-  local function define_diagnostic_sign(name, icon)
-    vim.fn.sign_define('DiagnosticSign' .. name, {
-      text = icon,
-      texthl = 'DiagnosticSign' .. name,
-      numhl = 'DiagnosticNum' .. name,
-    })
-  end
-
-  define_diagnostic_sign('Error', icons.error)
-  define_diagnostic_sign('Warn', icons.warn)
-  define_diagnostic_sign('Info', icons.info)
-  define_diagnostic_sign('Hint', icons.hint)
 end
 
 local function meteor_config()
@@ -100,7 +71,7 @@ local function meteor_config()
   vim.opt.list = true
   vim.opt.listchars = 'tab:» ,extends:›,precedes:‹,nbsp:·,trail:·'
   vim.opt.fillchars =
-    'eob: ,horiz:━,horizup:┻,horizdown:┳,vert:┃,vertleft:┫,vertright:┣,verthoriz:╋'
+  'eob: ,horiz:━,horizup:┻,horizdown:┳,vert:┃,vertleft:┫,vertright:┣,verthoriz:╋'
   vim.opt.showbreak = '↳'
 
   vim.opt.signcolumn = 'yes'
@@ -116,6 +87,8 @@ local function meteor_config()
   vim.opt.fsync = false
   -- This is the delay `CursorHold` autocommand will fire
   vim.opt.updatetime = 2000
+
+  -- vim.opt.textwidth = 100
 
   local meteor_augroup = vim.api.nvim_create_augroup('MeteorAugroup', {})
   -- Restore the cursor to the line when reopen a file.
@@ -145,37 +118,42 @@ local function meteor_config()
       end
     end,
   })
+
+  local icons = require('meteor.icons')
+  vim.diagnostic.config({
+    virtual_text = false,
+    underline = false,
+    severity_sort = true,
+    signs = {
+      priority = 20,
+      text = {
+        [vim.diagnostic.severity.ERROR] = icons.error,
+        [vim.diagnostic.severity.WARN] = icons.warn,
+        [vim.diagnostic.severity.INFO] = icons.info,
+        [vim.diagnostic.severity.HINT] = icons.hint,
+      },
+      numhl = {
+        [vim.diagnostic.severity.ERROR] = 'DiagnosticNumError',
+        [vim.diagnostic.severity.WARN] = 'DiagnosticNumWarn',
+        [vim.diagnostic.severity.INFO] = 'DiagnosticNumInfo',
+        [vim.diagnostic.severity.HINT] = 'DiagnosticNumHint',
+      }
+    }
+  })
 end
 
-M.opt = {}
+local function load_vimpack()
+  vim.cmd.packadd('nvim.difftool')
+  vim.cmd.packadd('nvim.undotree')
+end
 
 function M.setup(opt)
-  if opt ~= nil then
-    M.opt = opt
-  end
+  settings.set_opt(opt)
   meteor_init()
-  load_lazy_nvim(M.opt)
+  load_lazy_nvim(settings.get_opt())
+  load_vimpack()
   require('meteor.mappings').setup()
   meteor_config()
 end
-
-function M.is_dev()
-  return M.opt.dev
-end
-
-function M.is_personal()
-  return M.opt.personal
-end
-
-M.floating_window_border = {
-  '🭽',
-  '▔',
-  '🭾',
-  '▕',
-  '🭿',
-  '▁',
-  '🭼',
-  '▏',
-}
 
 return M
